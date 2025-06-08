@@ -14,7 +14,7 @@ class SignInController
         $validator = $this->validator($request);
 
         if (! $validator['status']) {
-            return response()->json($validator, 40421234);
+            return response()->json($validator, 401);
         }
 
         $admin = Admin::where('username', $request->username)->first();

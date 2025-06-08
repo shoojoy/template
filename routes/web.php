@@ -20,7 +20,4 @@ Route::get('admins/SignIn', function () {
 Route::post('admins/SignIn', [SignInController::class, 'main'])
     ->name('admins.SignIn.post');
 
-
-
-
 require __DIR__ . '/auth.php';
