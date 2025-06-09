@@ -1,7 +1,10 @@
-import HeroSection from '@/template/HeroSection'
+import HeroSection from "@/template/HeroSection";
+import Layout from "@/layouts/Layouts";
 
 export default function Welcome() {
     return (
-        <HeroSection />
+        <Layout>
+            <HeroSection />
+        </Layout>
     );
 }
