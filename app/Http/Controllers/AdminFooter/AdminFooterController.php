@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\AdminFooter\Service\IndexService;
+use App\Http\Controllers\AdminFooter\Service\UpdateService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AdminFooterController extends Controller
 {
@@ -52,9 +54,11 @@ class AdminFooterController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $us = new UpdateService($request->input('address'),  $request->input('companyName'), $request->input('ceoName'), $request->input('businessNumber'), $request->input('phone'), $request->input('fax'), $request->input('email'));
+
+        return response()->json($us->main());
     }
 
     /**

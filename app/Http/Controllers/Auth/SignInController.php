@@ -6,6 +6,7 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class SignInController
 {
@@ -19,12 +20,14 @@ class SignInController
 
         $admin = Admin::where('username', $request->username)->first();
 
-        if (! Hash::check($request->password, $admin->password)) {
+        if (! $admin || ! Hash::check($request->password, $admin->password)) {
             return response()->json([
                 'status'  => false,
-                'message' => '비밀번호가 일치하지 않습니다.',
+                'message' => '아이디 또는 비밀번호가 일치하지 않습니다.',
             ], 401);
         }
+
+        Auth::guard('admin')->login($admin);
 
         return response()->json([
             'status'  => true,
@@ -35,7 +38,7 @@ class SignInController
     private function validator(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'username' => 'required|exists:admins,username',
+            'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
