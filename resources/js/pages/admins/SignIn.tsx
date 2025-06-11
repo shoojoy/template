@@ -1,4 +1,3 @@
-// resources/js/pages/admins/Login.tsx
 import React from 'react';
 import { useForm } from '@inertiajs/react';
 

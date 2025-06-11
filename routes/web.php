@@ -20,10 +20,9 @@ Route::get('admins/SignIn', function () {
 Route::post('admins/SignIn', [SignInController::class, 'main'])
     ->name('admins.SignIn.post');
 
-Route::middleware(['auth:admin'])->group(function () {
-    Route::get('/admin/footer', function () {
-        return Inertia::render('adminComponents/AdminFooter');
-    })->name('admin.footer');
+Route::middleware('auth.admin')->group(function () {
+    Route::get('/admin/footer', fn() => Inertia::render('adminComponents/AdminFooter'))
+        ->name('admin.footer');
 });
 
 require __DIR__ . '/auth.php';

@@ -89,11 +89,11 @@ class UpdateService
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
+            return [
                 'status' => false,
                 'return' => $validator->errors()->first(),
-                'error' => $validator->errors()
-            ]);
+                'error'  => $validator->errors(),
+            ];
         }
 
         return [

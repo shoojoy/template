@@ -15,19 +15,18 @@ class SignUpController
         $validator = $this->validator($request);
 
         if (!$validator['status']) {
-            return $validator;
+            return response()->json($validator, 422);
         }
 
-        $sginUp = $this->signUp($request);
-
-        if (!$sginUp['status']) {
-            return $sginUp;
+        $signup = $this->signUp($request);
+        if (! $signup['status']) {
+            return response()->json($signup, 500);
         }
 
-        return [
-            'status' => true,
-            'message' => '성공적으로 계정을 생성하였습니다.'
-        ];
+        return response()->json([
+            'status'  => true,
+            'message' => '성공적으로 계정을 생성하였습니다.',
+        ]);
     }
     public function validator(Request $request)
     {
@@ -65,11 +64,11 @@ class SignUpController
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
+            return [
                 'status' => false,
                 'return' => $validator->errors()->first(),
-                'error' => $validator->errors()
-            ]);
+                'error'  => $validator->errors()
+            ];
         }
 
         return [
@@ -98,10 +97,10 @@ class SignUpController
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
-            return response()->json([
+            return [
                 'status' => false,
                 'return' => $e->getMessage()
-            ]);
+            ];
         }
         return [
             'status' => true,
