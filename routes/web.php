@@ -22,7 +22,9 @@ Route::post('admins/SignIn', [SignInController::class, 'main'])
 
 Route::middleware('auth.admin')->group(function () {
     Route::get('/admin/footer', fn() => Inertia::render('adminComponents/AdminFooter'))
-        ->name('admin.footer');
+        ->name('admin.footer');;
+    Route::get('/admin/hero', fn() => Inertia::render('adminComponents/AdminHero'))
+        ->name('admin.hero');;
 });
 
 require __DIR__ . '/auth.php';

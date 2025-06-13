@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('heroes', function (Blueprint $table) {
-            $table->id();
-            $table->string('title')->nullable();
-            $table->string('sub_title')->nullable();
-            $table->string('image_filename')->nullable();
-            $table->timestamps();
+        Schema::table('heroes', function (Blueprint $table) {
+            $table->string('image_filename')->nullable()->change();
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('heroes');
+        Schema::table('heroes', function (Blueprint $table) {
+            $table->string('image_filename')->nullable(false)->change();
+        });
     }
 };

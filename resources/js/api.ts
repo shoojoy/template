@@ -1,21 +1,27 @@
+// src/api.ts
 import axios from 'axios';
 
-axios.defaults.withCredentials = true;
+const BACKEND = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+const API     = import.meta.env.VITE_API_URL     || `${BACKEND}/api`;
+
+export const csrf = axios.create({
+  baseURL: BACKEND,
+  withCredentials: true,
+});
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api',
+  baseURL: API,
+  withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 });
 
-api.interceptors.request.use(async (config) => {
-  const method = config.method?.toLowerCase();
-  if (['post', 'put', 'patch', 'delete'].includes(method!)) {
-    await axios.get('/sanctum/csrf-cookie', {
-      baseURL: api.defaults.baseURL,
-      withCredentials: true,
-    });
+api.interceptors.request.use(async config => {
+  const m = config.method?.toLowerCase();
+  if (['post','put','patch','delete'].includes(m!)) {
+    // 상태 변경 전 CSRF 쿠키 요청
+    await csrf.get('/sanctum/csrf-cookie');
   }
   return config;
-}, (error) => Promise.reject(error));
+});
 
 export default api;

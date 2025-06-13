@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+// resources/js/pages/adminComponents/AdminFooter.tsx
+
+import React, { useState } from 'react';
 import api from '../../api';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 
 interface FooterForm {
     address: string;
@@ -24,33 +26,9 @@ export default function AdminFooter() {
     });
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        api
-            .get('/admin-footer')
-            .then((res) => {
-                if (res.data.status && res.data.data) {
-                    const d = res.data.data;
-                    setForm({
-                        address: d.address || '',
-                        companyName: d.company_name || '',
-                        ceoName: d.ceo_name || '',
-                        businessNumber: d.business_number || '',
-                        phone: d.phone || '',
-                        fax: d.fax || '',
-                        email: d.email || '',
-                    });
-                } else {
-                    console.warn('Footer 데이터 로드 실패:', res.data);
-                }
-            })
-            .catch((err) => {
-                console.error('Footer GET 에러:', err);
-            });
-    }, []);
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+        setForm(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -58,11 +36,8 @@ export default function AdminFooter() {
         setLoading(true);
 
         try {
-            const apiRoot = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api').replace(/\/api$/, '');
-            await axios.get('/sanctum/csrf-cookie', {
-                baseURL: apiRoot,
-                withCredentials: true,
-            });
+            // CSRF 쿠키가 이미 전역에서 세팅되어 있다면 이 호출은 생략 가능
+            await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
 
             const res = await api.put('/admin-footer', form);
             if (res.data.status) {
@@ -70,20 +45,18 @@ export default function AdminFooter() {
             } else {
                 alert('오류: ' + (res.data.return || res.data.message));
             }
-
         } catch (err: unknown) {
             console.error('Footer PUT 에러:', err);
 
             if (axios.isAxiosError(err)) {
-                const axiosErr = err as AxiosError<{ message?: string }>;
-                const msg = axiosErr.response?.data?.message ?? axiosErr.message;
+                // AxiosError 타입은 직접 import 하지 않아도 됩니다
+                const msg = err.response?.data?.message ?? err.message;
                 alert(msg);
             } else if (err instanceof Error) {
                 alert(err.message);
             } else {
                 alert(String(err));
             }
-
         } finally {
             setLoading(false);
         }
