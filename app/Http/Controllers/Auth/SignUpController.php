@@ -12,6 +12,13 @@ class SignUpController
 {
     public function main(Request $request)
     {
+        if (Admin::exists()) {
+            return response()->json([
+                'status' => false,
+                'return' => '관리자는 이미 등록되어 있습니다.',
+            ], 403);
+        }
+
         $validator = $this->validator($request);
 
         if (!$validator['status']) {
@@ -23,10 +30,14 @@ class SignUpController
             return response()->json($signup, 500);
         }
 
-        return response()->json([
-            'status'  => true,
-            'message' => '성공적으로 계정을 생성하였습니다.',
-        ]);
+        if ($request->wantsJson()) {
+            return response()->json([
+                'status'  => true,
+                'message' => '성공적으로 계정을 생성하였습니다.',
+            ], 200);
+        }
+
+        return redirect()->route('admins.SignIn');
     }
     public function validator(Request $request)
     {

@@ -2,24 +2,23 @@
 
 namespace App\Http\Controllers\AdminHero\Service;
 
+use App\Http\Service\Service;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
-class UpdateService
+class UpdateService extends Service
 {
     private ?string $title;
     private ?string $subTitle;
-    /** @var UploadedFile[] */
-    private array $imageFiles;
+    private ?UploadedFile $imageFile;
 
-    public function __construct(?string $title, ?string $subTitle, array $imageFiles)
+    public function __construct(?string $title, ?string $subTitle, ?UploadedFile $imageFile)
     {
         $this->title = $title;
         $this->subTitle = $subTitle;
-        $this->imageFiles = $imageFiles;
+        $this->imageFile = $imageFile;
     }
 
     public function main(): array
@@ -30,8 +29,8 @@ class UpdateService
                 return $this->validator();
             }
 
-            if (! $this->updateHero()['status']) {
-                return $this->updateHero();
+            if (! $this->update()['status']) {
+                return $this->update();
             }
 
             DB::commit();
@@ -51,20 +50,15 @@ class UpdateService
         $v = Validator::make([
             'title' => $this->title,
             'subTitle' => $this->subTitle,
-            'images' => $this->imageFiles,
+            'image' => $this->imageFile,
         ], [
             'title' => ['nullable', 'string', 'max:20'],
             'subTitle' => ['nullable', 'string', 'max:20'],
-            'images' => ['required', 'array', 'min:1', 'max:3'],
-            'images.*' => ['required', 'file', 'image', 'mimes:jpg,jpeg,png,svg,gif'],
+            'image' => ['nullable', 'file', 'mimes:jpg,jpeg,png,svg,gif'],
         ], [
             'title.max' => '타이틀은 최대 20자까지 가능합니다.',
-            'subTitle' => '서브 타이틀은 최대 20자까지 가능합니다',
-            'images.required' => '이미지를 최소 1장 업로드해야 합니다.',
-            'images.min' => '이미지는 최소 1장 이상이어야 합니다.',
-            'images.max' => '이미지는 최대 3장까지만 업로드할 수 있습니다.',
-            'images.*.mimes' => '이미지는 jpg,jpeg,png,svg,gif 형식만 업로드할 수 있습니다.',
-            'images.*.image' => '유효한 이미지 파일만 업로드할 수 있습니다.',
+            'subTitle' => '서브 타이틀은 최대 20자까지 가능합니다.',
+            'image.mimes' => '이미지는 jpg, jpeg, png, svg, gif 형식만 업로드할 수 있습니다.',
         ]);
 
         if ($v->fails()) {
@@ -78,32 +72,51 @@ class UpdateService
         return ['status' => true];
     }
 
-    private function updateHero(): array
+    private function update(): array
     {
         try {
             $adminId = Auth::guard('admin')->id();
-            $storedPaths = [];
+            $updateData = [];
 
-            foreach ($this->imageFiles as $file) {
-                /** @var UploadedFile $file */
-                $path = $file->store('uploads/hero', 'public');
-                $storedPaths[] = $path;
+            if (!is_null($this->title)) {
+                $updateData['title'] = $this->title;
+            }
+
+            if (!is_null($this->subTitle)) {
+                $updateData['sub_title'] = $this->subTitle;
+            }
+
+            if ($this->imageFile) {
+                $existingImagePath = DB::table('heroes')->where('admin_id', $adminId)->value('image_filename');
+
+                if ($existingImagePath) {
+                    $this->destroyImage('hero', $existingImagePath);
+                }
+
+                $imageResult = $this->storeImage($this->imageFile, 'hero');
+
+                if ($imageResult['status']) {
+                    $updateData['image_filename'] = $imageResult['imagePath'];
+                }
+            }
+
+            if (empty($updateData)) {
+                return [
+                    'status'  => false,
+                    'message' => '수정할 데이터가 없습니다.',
+                ];
             }
 
             DB::table('heroes')
-                ->where('id', $adminId)
-                ->update([
-                    'title' => $this->title,
-                    'sub_title' => $this->subTitle,
-                    'image_filename' => json_encode($storedPaths, JSON_UNESCAPED_SLASHES),
-                ]);
+                ->where('admin_id', $adminId)
+                ->update($updateData);
 
             return ['status' => true];
         } catch (\Exception $e) {
             return [
-                'status' => false,
-                'message' => '정보 업데이트중 오류가 발생하였습니다.',
-                'error' => $e->getMessage(),
+                'status'  => false,
+                'message' => '정보 업데이트 중 오류가 발생하였습니다.',
+                'error'   => $e->getMessage(),
             ];
         }
     }

@@ -51,9 +51,9 @@ class AdminHeroController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(?string $title, ?string $subTitle, array $imageFiles)
+    public function update(Request $request)
     {
-        $us = new UpdateService($title, $subTitle, $imageFiles);
+        $us = new UpdateService($request->input('title'), $request->input('subTitle'), $request->file('imageFile'));
 
         return response()->json($us->main());
     }

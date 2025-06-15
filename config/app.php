@@ -123,5 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'hero_image_file_path' => '/storage/uploads/hero/hero.jpeg'
+
 
 ];

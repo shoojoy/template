@@ -53,9 +53,9 @@ class UpdateService
         } catch (\Throwable $e) {
             DB::rollBack();
             return [
-                'status'  => false,
+                'status' => false,
                 'message' => '예기치 못한 오류가 발생했습니다.',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ];
         }
     }
@@ -92,7 +92,7 @@ class UpdateService
             return [
                 'status' => false,
                 'return' => $validator->errors()->first(),
-                'error'  => $validator->errors(),
+                'error' => $validator->errors(),
             ];
         }
 
@@ -109,13 +109,13 @@ class UpdateService
             DB::table('admins')
                 ->where('id', $adminId)
                 ->update([
-                    'address'         => $this->address,
-                    'company_name'    => $this->companyName,
-                    'ceo_name'        => $this->ceoName,
+                    'address' => $this->address,
+                    'company_name' => $this->companyName,
+                    'ceo_name' => $this->ceoName,
                     'business_number' => $this->businessNumber,
-                    'phone'           => $this->phone,
-                    'fax'             => $this->fax,
-                    'email'           => $this->email,
+                    'phone' => $this->phone,
+                    'fax' => $this->fax,
+                    'email' => $this->email,
                 ]);
 
             return [
@@ -123,9 +123,9 @@ class UpdateService
             ];
         } catch (\Exception $e) {
             return [
-                'status'  => false,
+                'status' => false,
                 'message' => '정보 업데이트중 오류가 발생하였습니다.',
-                'error'   => $e->getMessage()
+                'error' => $e->getMessage()
             ];
         }
     }

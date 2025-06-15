@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminFooter\AdminFooterController;
 use App\Http\Controllers\AdminHero\AdminHeroController;
 use App\Http\Controllers\Auth\SignInController;
+use App\Http\Controllers\Hero\HeroController;
 use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
 use Illuminate\Support\Facades\Route;
 

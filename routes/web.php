@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\SignInController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\SignUpController;
+use App\Http\Controllers\Hero\HeroController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -22,9 +23,17 @@ Route::post('admins/SignIn', [SignInController::class, 'main'])
 
 Route::middleware('auth.admin')->group(function () {
     Route::get('/admin/footer', fn() => Inertia::render('adminComponents/AdminFooter'))
-        ->name('admin.footer');;
+        ->name('admin.footer');
     Route::get('/admin/hero', fn() => Inertia::render('adminComponents/AdminHero'))
-        ->name('admin.hero');;
+        ->name('admin.hero');
+
+    Route::prefix('hero')->group(function () {
+        //
+    });
+});
+
+Route::prefix('hero')->group(function () {
+    Route::get('/', [HeroController::class, 'index']);
 });
 
 require __DIR__ . '/auth.php';

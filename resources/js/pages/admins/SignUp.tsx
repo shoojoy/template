@@ -1,5 +1,7 @@
 import React from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, router } from '@inertiajs/react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SignUp: React.FC = () => {
     const form = useForm({
@@ -20,6 +22,21 @@ const SignUp: React.FC = () => {
         e.preventDefault();
         form.post('/admins/SignUp', {
             forceFormData: true,
+            onSuccess: () => {
+                toast.success('🎉 가입에 성공하였습니다!', {
+                    position: 'top-center',
+                    autoClose: 2000,
+                });
+                setTimeout(() => {
+                    router.visit('/admins/SignIn');
+                }, 2000);
+            },
+            onError: () => {
+                toast.error('❌ 가입 중 오류가 발생했습니다.', {
+                    position: 'top-center',
+                    autoClose: 2000,
+                });
+            },
         });
     };
 
@@ -163,9 +180,7 @@ const SignUp: React.FC = () => {
                 )}
 
                 {/* Logo Image */}
-                <label
-                    className="w-full inline-flex items-center justify-center border border-gray-300 p-2 rounded mb-2 cursor-pointer hover:bg-gray-50"
-                >
+                <label className="w-full inline-flex items-center justify-center border border-gray-300 p-2 rounded mb-2 cursor-pointer hover:bg-gray-50">
                     로고 이미지 선택
                     <input
                         type="file"
@@ -177,15 +192,11 @@ const SignUp: React.FC = () => {
                         }}
                     />
                 </label>
-
-                {/* 선택된 파일명 표시 */}
                 {form.data.logo_image_filename && (
                     <div className="text-gray-700 text-sm mb-2">
                         선택된 파일: {form.data.logo_image_filename.name}
                     </div>
                 )}
-
-                {/* 에러 */}
                 {form.errors.logo_image_filename && (
                     <div className="text-red-500 text-sm mb-2">
                         {form.errors.logo_image_filename}
@@ -200,6 +211,7 @@ const SignUp: React.FC = () => {
                     {form.processing ? '가입 중…' : '가입하기'}
                 </button>
             </form>
+            <ToastContainer />
         </div>
     );
 };
