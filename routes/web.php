@@ -28,7 +28,8 @@ Route::middleware('auth.admin')->group(function () {
         ->name('admin.hero');
 
     Route::prefix('hero')->group(function () {
-        //
+        Route::post('/store', [HeroController::class, 'store']);
+        Route::put('/update', [HeroController::class, 'update']);
     });
 });
 

@@ -10,23 +10,25 @@ class Service
     public function storeImage(UploadedFile $image, string $pathname): array
     {
         $imageFilename = uniqid() . '.' . $image->getClientOriginalExtension();
-
-        $directory = 'uploads/' . $pathname;
+        $directory     = 'uploads/' . trim($pathname, '/');
 
         try {
             $path = $image->storeAs($directory, $imageFilename, 'public');
+            $publicUrl   = Storage::url($path);
+            $absoluteFs  = Storage::disk('public')->path($path);
 
             return [
-                'status' => true,
-                'imagePath' => Storage::url($path),
-                'pathname' => $pathname,
-                'imageFilename' => $imageFilename
+                'status'           => true,
+                'imageFilename'    => $imageFilename,
+                'relativePath'     => $path,
+                'publicUrl'        => $publicUrl,
+                'absoluteFilePath' => $absoluteFs,
             ];
         } catch (\Exception $e) {
             return [
-                'status' => false,
-                'message' => '이미지 파일을 저장하는 과정에서 오류가 발생했습니다.',
-                'error' => $e->getMessage()
+                'status'  => false,
+                'message' => '이미지 저장 실패',
+                'error'   => $e->getMessage(),
             ];
         }
     }
