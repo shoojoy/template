@@ -61,7 +61,7 @@ class UpdateService extends Service
             'token' => ['required', 'string', 'exists:heroes,token']
         ], [
             'title.max' => '타이틀은 최대 20자까지 가능합니다.',
-            'subTitle' => '서브 타이틀은 최대 20자까지 가능합니다.',
+            'subTitle.max' => '서브 타이틀은 최대 20자까지 가능합니다.',
             'imageFilename.mimes' => '이미지는 jpg, jpeg, png, svg, gif 형식만 업로드할 수 있습니다.',
             'token.required' => '수정 가능한 페이지가 없습니다.',
             'token.exists'   => '유효한 페이지가 아닙니다.',
@@ -129,7 +129,20 @@ class UpdateService extends Service
         DB::table('heroes')
             ->where('token', $this->token)
             ->update($data);
+        $updated = DB::table('heroes')
+            ->where('token', $this->token)
+            ->first();
 
-        return ['status' => true];
+
+        return [
+            'status' => true,
+            'hero'   => [
+                'index'    => $updated->index,
+                'title'    => $updated->title,
+                'subtitle' => $updated->subtitle,
+                'image'    => $updated->image_filename,
+                'token'    => $updated->token,
+            ],
+        ];
     }
 }

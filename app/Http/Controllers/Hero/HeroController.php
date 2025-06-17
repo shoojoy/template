@@ -27,7 +27,7 @@ class HeroController extends Controller
     }
     public function update(Request $request)
     {
-        $us = new UpdateService($request->input('title'), $request->input('subTitle'), $request->file('imageFile'), $request->input('token'));
+        $us = new UpdateService($request->input('title'), $request->input('subTitle'), $request->file('imageFilename'), $request->input('token'));
 
         return response()->json($us->main());
     }

@@ -25,22 +25,24 @@ class StoreService extends Service
     {
         DB::beginTransaction();
         try {
-            if (! $this->validator()['status']) {
-                return $this->validator();
+            $validation = $this->validator();
+            if (!$validation['status']) {
+                return $validation;
             }
 
-            if (! $this->store()['status']) {
-                return $this->store();
+            $store = $this->store();
+            if (!$store['status']) {
+                return $store;
             }
 
             DB::commit();
-            return ['status' => true];
+            return $store;
         } catch (\Throwable $e) {
             DB::rollBack();
             return [
-                'status'  => false,
+                'status' => false,
                 'message' => '예기치 못한 오류가 발생했습니다.',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ];
         }
     }
@@ -68,7 +70,7 @@ class StoreService extends Service
         if ($validator->fails()) {
             return [
                 'status' => false,
-                'return' => $validator->errors()->first(),
+                'message' => $validator->errors()->first(),
                 'error' => $validator->errors(),
             ];
         }
@@ -77,12 +79,14 @@ class StoreService extends Service
         if ($count >= 3) {
             return [
                 'status' => false,
-                'return' => 'Hero는 최대 3개까지만 생성할 수 있습니다.',
-                'error'  => null,
+                'message' => 'Hero는 최대 3개까지만 생성할 수 있습니다.',
+                'error' => null,
             ];
         }
 
-        return ['status' => true];
+        return [
+            'status' => true
+        ];
     }
 
     private function store(): array
@@ -94,34 +98,43 @@ class StoreService extends Service
             $savedUrl = null;
             if ($this->imageFilename instanceof UploadedFile) {
                 $upload = $this->storeImage($this->imageFilename, 'hero');
-
                 if (! $upload['status']) {
                     return [
-                        'status'  => false,
+                        'status' => false,
                         'message' => $upload['message'],
-                        'error'   => $upload['error'],
+                        'error' => $upload['error'],
                     ];
                 }
-
                 $savedUrl = $upload['publicUrl'];
             }
 
             DB::table('heroes')->insert([
-                'title'           => $this->title,
-                'subtitle'        => $this->subTitle,
-                'image_filename'  => $savedUrl,
-                'token'           => $token,
-                'index'           => $nextIndex,
-                'created_at'      => now(),
-                'updated_at'      => now(),
+                'title' => $this->title,
+                'subtitle' => $this->subTitle,
+                'image_filename' => $savedUrl,
+                'token' => $token,
+                'index' => $nextIndex,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
-            return ['status' => true];
+            $heroDto = [
+                'index' => $nextIndex,
+                'title' => $this->title,
+                'subtitle' => $this->subTitle,
+                'image' => $savedUrl,
+                'token' => $token,
+            ];
+
+            return [
+                'status' => true,
+                'hero' => $heroDto,
+            ];
         } catch (\Throwable $e) {
             return [
-                'status'  => false,
+                'status' => false,
                 'message' => '저장 중 오류가 발생했습니다.',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ];
         }
     }

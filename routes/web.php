@@ -30,6 +30,7 @@ Route::middleware('auth.admin')->group(function () {
     Route::prefix('hero')->group(function () {
         Route::post('/store', [HeroController::class, 'store']);
         Route::put('/update', [HeroController::class, 'update']);
+        Route::delete('/{token}', [HeroController::class, 'destroy']);
     });
 });
 

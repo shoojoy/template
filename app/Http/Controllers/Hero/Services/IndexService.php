@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Hero\Services;
 
+use Illuminate\Support\Facades\Storage;
+
 use App\Http\Service\Service;
 use Illuminate\Support\Facades\DB;
 
@@ -28,7 +30,8 @@ class IndexService extends Service
                 'index',
                 'title',
                 'subtitle',
-                DB::raw("CONCAT('{$path}', image_filename) AS image"),
+                'token',
+                'image_filename AS image',
             ])
             ->get();
     }
