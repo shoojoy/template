@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class SignInController
 {
@@ -19,7 +21,6 @@ class SignInController
         }
 
         $admin = Admin::where('username', $request->username)->first();
-
         if (! $admin || ! Hash::check($request->password, $admin->password)) {
             return response()->json([
                 'status'  => false,
@@ -28,11 +29,21 @@ class SignInController
         }
 
         Auth::guard('admin')->login($admin);
+        $request->session()->regenerate();
 
-        return response()->json([
-            'status'  => true,
-            'message' => '로그인에 성공했습니다.',
-        ]);
+        if ($request->header('X-Inertia')) {
+            return Inertia::location(route('admin.hero'));
+        }
+
+        return redirect()->route('admin.hero');
+    }
+    public function show(Request $request)
+    {
+        if (!$this->authIndex()) {
+            return redirect()->route('admins.SignUp');
+        }
+
+        return Inertia::render('admins/SignIn');
     }
 
     private function validator(Request $request)
@@ -50,5 +61,14 @@ class SignInController
         }
 
         return ['status' => true];
+    }
+
+    private function authIndex()
+    {
+        return DB::table('admins')
+            ->select([
+                'id',
+            ])
+            ->exists();
     }
 }

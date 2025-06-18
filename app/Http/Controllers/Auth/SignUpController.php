@@ -37,7 +37,9 @@ class SignUpController
             ], 200);
         }
 
-        return redirect()->route('admins.SignIn');
+        return redirect()
+            ->route('admins.SignIn')
+            ->with('success', '성공적으로 계정을 생성하였습니다.');
     }
     public function validator(Request $request)
     {
@@ -87,7 +89,7 @@ class SignUpController
         ];
     }
 
-    public function signUp(Request $request)
+    private function signUp(Request $request)
     {
         try {
             DB::beginTransaction();

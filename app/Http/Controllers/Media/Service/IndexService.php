@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Hero\Services;
-
-use Illuminate\Support\Facades\Storage;
+namespace App\Http\Controllers\Media\Service;
 
 use App\Http\Service\Service;
 use Illuminate\Support\Facades\DB;
@@ -18,19 +16,17 @@ class IndexService extends Service
     {
         return [
             'status' => true,
-            'heroes' => $this->getHeroes()
+            'medias' => $this->getMedias()
         ];
     }
 
-    private function getHeroes()
+    private function getMedias()
     {
-        return DB::table('heroes')
+        return DB::table('medias')
             ->select([
-                'index',
                 'title',
-                'subtitle',
+                'image_filename',
                 'token',
-                'image_filename AS image',
             ])
             ->get();
     }
