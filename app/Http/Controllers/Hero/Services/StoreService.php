@@ -56,13 +56,13 @@ class StoreService extends Service
                 'imageFilename' => $this->imageFilename,
             ],
             [
-                'title' => ['nullable', 'string', 'max:20'],
-                'subtitle' => ['nullable', 'string', 'max:20'],
+                'title' => ['nullable', 'string', 'max:255'],
+                'subtitle' => ['nullable', 'string', 'max:255'],
                 'imageFilename' => ['nullable', 'file', 'mimes:jpg,jpeg,png,svg,gif'],
             ],
             [
-                'title.max' => '타이틀은 최대 20자까지 가능합니다.',
-                'subtitle.max' => '서브 타이틀은 최대 20자까지 가능합니다.',
+                'title.max' => '타이틀은 최대 255자까지 가능합니다.',
+                'subtitle.max' => '서브 타이틀은 최대 255자까지 가능합니다.',
                 'imageFilename.mimes' => '이미지는 jpg, jpeg, png, svg, gif 형식만 업로드할 수 있습니다.',
             ]
         );

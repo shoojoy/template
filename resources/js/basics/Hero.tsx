@@ -1,30 +1,15 @@
 import { useEffect, useState } from "react";
 
-interface Hero {
-    title: string;
-    subtitle: string;
-    image: string;
+interface HeroProps {
+    heroes: any[];
 }
 
-export default function HeroComponent() {
-    const [heroes, setHeroes] = useState<Hero[]>([]);
+export default function HeroComponent({ heroes }: HeroProps) {
     const [currentIdx, setCurrentIdx] = useState(0);
 
     useEffect(() => {
-        fetch("/hero")
-            .then((res) => {
-                if (!res.ok) throw new Error(res.statusText);
-                return res.json();
-            })
-            .then((wrapper: { status: boolean; heroes: Hero[] }) => {
-                setHeroes(wrapper.heroes);
-            })
-            .catch(() => {
-                console.error("히어로 데이터를 불러오는 중 오류 발생");
-            });
-    }, []);
+        console.log(heroes);
 
-    useEffect(() => {
         if (heroes.length <= 1) return;
         const timer = setInterval(() => {
             setCurrentIdx((i) => (i + 1) % heroes.length);

@@ -1,96 +1,129 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Slider from 'react-slick';
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import Slider from 'react-slick'
+import { usePage, Link } from '@inertiajs/react'
 
-// slick-carousel CSS
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 
-interface Media {
-    title: string;
-    image_filename: string;
-    token: string;
+interface MediaProps {
+    medias: any[];
 }
 
 export default function MediaCarousel() {
-    const [medias, setMedias] = useState<Media[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [medias, setMedias] = useState<MediaProps[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+    const { props } = usePage()
+    const configs = props.configs as { config: string; value: string }[]
+
+    const mediaTitle = configs.find(i => i.config === 'media_title')?.value || ''
 
     useEffect(() => {
         axios
-            .get<{ status: boolean; medias: Media[] }>('/media')
+            .get<{ status: boolean; medias: MediaProps[] }>('/media')
             .then(res => {
-                if (!res.data.status) throw new Error('Failed to load media');
-                setMedias(res.data.medias);
+                if (!res.data.status) throw new Error()
+                setMedias(res.data.medias)
             })
-            .catch(err => {
-                console.error(err);
-                setError('미디어를 불러오는 중 오류가 발생했습니다.');
-            })
-            .finally(() => setLoading(false));
-    }, []);
+            .catch(() => setError('미디어를 불러오는 중 오류가 발생했습니다.'))
+            .finally(() => setLoading(false))
+    }, [])
 
     if (loading) {
         return (
-            <div className="w-full h-screen bg-white flex items-center justify-center">
+            <div className="w-full h-screen flex items-center justify-center">
                 <p className="text-gray-500">로딩 중...</p>
             </div>
-        );
+        )
     }
-
     if (error) {
         return (
-            <div className="w-full h-screen bg-white flex items-center justify-center">
+            <div className="w-full h-screen flex items-center justify-center">
                 <p className="text-red-500">{error}</p>
             </div>
-        );
+        )
     }
-
     if (!medias.length) {
         return (
-            <div className="w-full h-screen bg-white flex items-center justify-center">
+            <div className="w-full h-screen flex items-center justify-center">
                 <p className="text-gray-500">등록된 미디어가 없습니다.</p>
             </div>
-        );
+        )
     }
 
-    // 캐러셀 설정
+    const count = medias.length
+    const getShow = (max: number) => Math.min(count, max)
+    const infiniteLoop = count >= 2
+
     const settings = {
         dots: true,
-        infinite: true,
         speed: 500,
-        slidesToShow: 5,
+        slidesToShow: getShow(5),
         slidesToScroll: 1,
+        infinite: infiniteLoop,
         autoplay: true,
         autoplaySpeed: 3000,
         responsive: [
-            { breakpoint: 1024, settings: { slidesToShow: 3 } },
-            { breakpoint: 768, settings: { slidesToShow: 2 } },
-            { breakpoint: 480, settings: { slidesToShow: 1 } },
+            {
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: getShow(3),
+                    infinite: infiniteLoop,
+                },
+            },
+            {
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: getShow(2),
+                    infinite: infiniteLoop,
+                },
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: getShow(1),
+                    infinite: infiniteLoop,
+                },
+            },
         ],
-    };
+    }
 
     return (
-        <div id="media" className="w-full h-screen bg-gray-200 py-8">
-            <div className="max-w-screen-2xl mx-auto px-2">
+        <div
+            id="media"
+            className="w-full h-screen py-20 bg-gradient-to-b from-[#EDECE9] to-white"
+        >
+            <div className="max-w-screen-2xl mx-auto px-4">
                 <Slider {...settings}>
-                    {medias.map(media => (
-                        <div key={media.token} className="px-4">
-                            <div className="bg-white shadow rounded-2xl overflow-hidden w-full h-[320px]">
+                    {medias.map(m => (
+                        <div key={m.token} className="px-2">
+                            <div className="bg-white shadow-xl rounded-2xl overflow-hidden h-[320px] relative">
                                 <img
-                                    src={media.image_filename}
-                                    alt={media.title}
+                                    src={m.image_filename}
+                                    alt={m.title}
                                     className="w-full h-full object-cover"
                                 />
-                                <h3 className="text-lg font-medium text-black ">
-                                    {media.title}
+                                <h3 className="absolute bottom-4 left-4 text-white text-lg font-semibold drop-shadow">
+                                    {m.title}
                                 </h3>
                             </div>
                         </div>
                     ))}
                 </Slider>
+
+                {mediaTitle && (
+                    <div className="flex justify-between items-center mt-12 px-4">
+                        <h2 className="text-4xl font-bold">{mediaTitle}</h2>
+                        <Link
+                            href="/contact"
+                            className="bg-neutral-700 hover:bg-black text-white font-semibold py-2 px-4 rounded"
+                        >
+                            상담 바로가기
+                        </Link>
+                    </div>
+                )}
             </div>
         </div>
-    );
+    )
 }

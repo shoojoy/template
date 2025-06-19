@@ -52,7 +52,7 @@ class StoreService extends Service
             'title' => $this->title,
             'imageFilename' => $this->imageFilename,
         ], [
-            'title' => ['required', 'string', 'max:20'],
+            'title' => ['required', 'string', 'max:255'],
             'imageFilename' => ['required', 'file', 'mimes:jpg,jpeg,png,svg,gif']
         ], [
             'title.required' => '미디어 제목을 입력하여 주세요.',

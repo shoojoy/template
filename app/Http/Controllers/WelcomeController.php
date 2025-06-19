@@ -6,18 +6,27 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
+use function PHPUnit\Framework\isEmpty;
+
 class WelcomeController extends Controller
 {
     public function index()
     {
         $heroes = $this->getHeroes();
 
-        if (!$heroes) {
+        if ($heroes->isEmpty()) {
             return redirect('/admins/SignIn');
         };
 
+        $medias = $this->getMedias();
+
+        if (!$medias) {
+            return redirect('/admins/SignIn');
+        }
+
         return Inertia::render('welcome', [
             'heroes' => $heroes,
+            'medias' => $medias
         ]);
     }
 
@@ -34,8 +43,14 @@ class WelcomeController extends Controller
             ->get();
     }
 
-    private function getAbouts()
+    private function getMedias()
     {
-        //
+        return DB::table('medias')
+            ->select([
+                'title',
+                'image_filename AS image',
+                'token'
+            ])
+            ->get();
     }
 }

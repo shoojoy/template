@@ -55,13 +55,13 @@ class UpdateService extends Service
             'imageFilename' => $this->imageFilename,
             'token' => $this->token,
         ], [
-            'title' => ['nullable', 'string', 'max:20'],
-            'subTitle' => ['nullable', 'string', 'max:20'],
+            'title' => ['nullable', 'string', 'max:255'],
+            'subTitle' => ['nullable', 'string', 'max:255'],
             'imageFilename' => ['nullable', 'file', 'mimes:jpg,jpeg,png,svg,gif'],
             'token' => ['required', 'string', 'exists:heroes,token']
         ], [
-            'title.max' => '타이틀은 최대 20자까지 가능합니다.',
-            'subTitle.max' => '서브 타이틀은 최대 20자까지 가능합니다.',
+            'title.max' => '타이틀은 최대 255자까지 가능합니다.',
+            'subTitle.max' => '서브 타이틀은 최대 255자까지 가능합니다.',
             'imageFilename.mimes' => '이미지는 jpg, jpeg, png, svg, gif 형식만 업로드할 수 있습니다.',
             'token.required' => '수정 가능한 페이지가 없습니다.',
             'token.exists'   => '유효한 페이지가 아닙니다.',

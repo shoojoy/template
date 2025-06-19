@@ -11,7 +11,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            HeroSeeder::class,
+            ConfigsTableSeeder::class,
             // 다른 시더들 추가해야함
         ]);
     }
