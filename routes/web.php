@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Auth\SignUpController;
 use App\Http\Controllers\Hero\HeroController;
+use App\Http\Controllers\AboutCounter\AboutCounterController;
 use App\Http\Controllers\WelcomeController;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
@@ -40,6 +41,11 @@ Route::middleware('auth.admin')->group(function () {
         Route::post('/store', [MediaController::class, 'store']);
         Route::put('/update', [MediaController::class, 'update']);
         Route::delete('/{token}', [MediaController::class, 'destroy']);
+    });
+    Route::prefix('about-counter')->group(function () {
+        Route::post('/store', [AboutCounterController::class, 'store']);
+        Route::put('/update', [AboutCounterController::class, 'update']);
+        Route::delete('/{token}', [AboutCounterController::class, 'destroy']);
     });
 });
 

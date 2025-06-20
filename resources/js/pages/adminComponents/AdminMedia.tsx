@@ -48,10 +48,7 @@ export default function AdminMedia() {
         }
         setSavingTitle(true)
         axios
-            .post('/admin/config', {
-                config: 'media_title',
-                value: mediaTitle,
-            })
+            .post('/admin/config', { config: 'media_title', value: mediaTitle })
             .then(res => {
                 if (!res.data.status) {
                     setTitleError(res.data.message)
@@ -180,23 +177,23 @@ export default function AdminMedia() {
     }
 
     return (
-        <div className="bg-white min-h-screen py-10">
-            <div className="max-w-4xl mx-auto p-6 bg-gray-100 rounded shadow space-y-8">
+        <div className="bg-white min-h-screen py-10 text-black">
+            <div className="max-w-4xl mx-auto p-6 bg-gray-100 rounded shadow space-y-8 text-black">
                 {/* 1. media_title 수정 폼 */}
-                <form onSubmit={updateTitle} className="bg-white p-4 rounded shadow space-y-2">
-                    <h2 className="text-xl font-semibold">미디어 섹션 타이틀</h2>
+                <form onSubmit={updateTitle} className="bg-white p-4 rounded shadow space-y-2 text-black">
+                    <h2 className="text-xl font-semibold text-black">미디어 섹션 타이틀</h2>
                     <div className="flex flex-col sm:flex-row gap-2">
                         <input
                             type="text"
                             value={mediaTitle}
                             onChange={e => setMediaTitle(e.target.value)}
-                            className="flex-1 border rounded px-3 py-2 w-full"
+                            className="flex-1 border rounded px-3 py-2 w-full text-black"
                             placeholder="타이틀을 입력하세요"
                         />
                         <button
                             type="submit"
                             disabled={savingTitle}
-                            className="w-full sm:w-auto px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-50"
+                            className="w-full sm:w-auto px-4 py-2 bg-indigo-600 text-black rounded disabled:opacity-50"
                         >
                             {savingTitle ? '저장 중...' : '저장'}
                         </button>
@@ -205,11 +202,11 @@ export default function AdminMedia() {
                 </form>
 
                 {/* 2. Media CRUD */}
-                <div>
-                    <h2 className="text-2xl font-semibold mb-4">Media 정보 관리</h2>
+                <div className="text-black">
+                    <h2 className="text-2xl font-semibold mb-4 text-black">Media 정보 관리</h2>
                     <button
                         onClick={addNew}
-                        className="mb-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                        className="mb-4 px-4 py-2 bg-green-600 text-black rounded hover:bg-green-700"
                     >
                         새 미디어 추가
                     </button>
@@ -218,22 +215,22 @@ export default function AdminMedia() {
                         const state = loading[item.token] || { saving: false, updating: false, deleting: false }
                         const isNew = item.token.startsWith('temp-')
                         return (
-                            <div key={item.token} className="bg-white p-4 rounded shadow mb-4 space-y-4">
+                            <div key={item.token} className="bg-white p-4 rounded shadow mb-4 space-y-4 text-black">
                                 <div>
-                                    <label className="block font-medium">제목</label>
+                                    <label className="block font-medium text-black">제목</label>
                                     <input
                                         type="text"
                                         value={item.title}
                                         onChange={e => updateItem(item.token, { title: e.target.value })}
-                                        className="w-full border rounded p-2"
+                                        className="w-full border rounded p-2 text-black"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block font-medium">이미지</label>
+                                    <label className="block font-medium text-black">이미지</label>
                                     <div className="flex items-center space-x-4 mt-2">
                                         <label
                                             htmlFor={`file-${item.token}`}
-                                            className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
+                                            className="bg-blue-600 text-black px-4 py-2 rounded cursor-pointer"
                                         >
                                             파일 선택
                                         </label>
@@ -246,22 +243,7 @@ export default function AdminMedia() {
                                             }
                                             className="hidden"
                                         />
-                                        {item.file && <span className="text-sm">{item.file.name}</span>}
-                                    </div>
-                                    <div className="mt-4">
-                                        {item.file ? (
-                                            <img
-                                                src={URL.createObjectURL(item.file)}
-                                                alt="preview"
-                                                className="max-w-full rounded"
-                                            />
-                                        ) : item.imageUrl ? (
-                                            <img
-                                                src={item.imageUrl}
-                                                alt="existing"
-                                                className="max-w-full rounded"
-                                            />
-                                        ) : null}
+                                        {item.file && <span className="text-sm text-black">{item.file.name}</span>}
                                     </div>
                                 </div>
                                 <div className="flex space-x-2">

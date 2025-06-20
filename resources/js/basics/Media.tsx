@@ -1,58 +1,35 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import React from 'react'
 import Slider from 'react-slick'
 import { usePage, Link } from '@inertiajs/react'
 
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 
-interface MediaProps {
-    medias: any[];
+interface Media {
+    token: string
+    image_filename: string
+    title: string
+}
+interface Config {
+    config: string
+    value: string
+}
+interface PageProps {
+    medias: Media[]
+    configs: Config[]
+    // Inertia.PageProps 제약을 만족하기 위한 인덱스 서명
+    [key: string]: any
 }
 
 export default function MediaCarousel() {
-    const [medias, setMedias] = useState<MediaProps[]>([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
-    const { props } = usePage()
-    const configs = props.configs as { config: string; value: string }[]
+    const {
+        props: { medias, configs },
+    } = usePage<PageProps>()
 
-    const mediaTitle = configs.find(i => i.config === 'media_title')?.value || ''
-
-    useEffect(() => {
-        axios
-            .get<{ status: boolean; medias: MediaProps[] }>('/media')
-            .then(res => {
-                if (!res.data.status) throw new Error()
-                setMedias(res.data.medias)
-            })
-            .catch(() => setError('미디어를 불러오는 중 오류가 발생했습니다.'))
-            .finally(() => setLoading(false))
-    }, [])
-
-    if (loading) {
-        return (
-            <div className="w-full h-screen flex items-center justify-center">
-                <p className="text-gray-500">로딩 중...</p>
-            </div>
-        )
-    }
-    if (error) {
-        return (
-            <div className="w-full h-screen flex items-center justify-center">
-                <p className="text-red-500">{error}</p>
-            </div>
-        )
-    }
-    if (!medias.length) {
-        return (
-            <div className="w-full h-screen flex items-center justify-center">
-                <p className="text-gray-500">등록된 미디어가 없습니다.</p>
-            </div>
-        )
-    }
-
+    const mediaTitle = configs.find((c) => c.config === 'media_title')?.value || ''
     const count = medias.length
+
+    // 슬라이드에 보여줄 개수 계산
     const getShow = (max: number) => Math.min(count, max)
     const infiniteLoop = count >= 2
 
@@ -62,31 +39,30 @@ export default function MediaCarousel() {
         slidesToShow: getShow(5),
         slidesToScroll: 1,
         infinite: infiniteLoop,
-        autoplay: true,
+        autoplay: infiniteLoop,
         autoplaySpeed: 3000,
         responsive: [
             {
                 breakpoint: 1024,
-                settings: {
-                    slidesToShow: getShow(3),
-                    infinite: infiniteLoop,
-                },
+                settings: { slidesToShow: getShow(3), infinite: infiniteLoop },
             },
             {
                 breakpoint: 768,
-                settings: {
-                    slidesToShow: getShow(2),
-                    infinite: infiniteLoop,
-                },
+                settings: { slidesToShow: getShow(2), infinite: infiniteLoop },
             },
             {
                 breakpoint: 480,
-                settings: {
-                    slidesToShow: getShow(1),
-                    infinite: infiniteLoop,
-                },
+                settings: { slidesToShow: getShow(1), infinite: infiniteLoop },
             },
         ],
+    }
+
+    if (!count) {
+        return (
+            <div className="w-full h-screen flex items-center justify-center">
+                <p className="text-gray-500">등록된 미디어가 없습니다.</p>
+            </div>
+        )
     }
 
     return (
@@ -96,7 +72,7 @@ export default function MediaCarousel() {
         >
             <div className="max-w-screen-2xl mx-auto px-4">
                 <Slider {...settings}>
-                    {medias.map(m => (
+                    {medias.map((m) => (
                         <div key={m.token} className="px-2">
                             <div className="bg-white shadow-xl rounded-2xl overflow-hidden h-[320px] relative">
                                 <img

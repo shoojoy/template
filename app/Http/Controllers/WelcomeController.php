@@ -20,7 +20,7 @@ class WelcomeController extends Controller
 
         $medias = $this->getMedias();
 
-        if (!$medias) {
+        if ($medias->isEmpty()) {
             return redirect('/admins/SignIn');
         }
 
