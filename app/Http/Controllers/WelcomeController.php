@@ -24,9 +24,23 @@ class WelcomeController extends Controller
             return redirect('/admins/SignIn');
         }
 
+        $abouts = $this->getAboutCounters();
+
+        if ($abouts->isEmpty()) {
+            return redirect('/admins/SignIn');
+        }
+
+        $aboutImages = $this->getAboutImages();
+
+        if ($aboutImages->isEmpty()) {
+            return redirect('/admins/SignIn');
+        }
+
         return Inertia::render('welcome', [
             'heroes' => $heroes,
-            'medias' => $medias
+            'medias' => $medias,
+            'abouts' => $abouts,
+            'aboutImages' => $aboutImages
         ]);
     }
 
@@ -50,6 +64,27 @@ class WelcomeController extends Controller
                 'title',
                 'image_filename AS image',
                 'token'
+            ])
+            ->get();
+    }
+
+    private function getAboutCounters()
+    {
+        return DB::table('about_counters')
+            ->select([
+                'token',
+                'title',
+                'value',
+            ])
+            ->get();
+    }
+
+    private function getAboutImages()
+    {
+        return DB::table('about_images')
+            ->select([
+                'token',
+                'image_filename as image',
             ])
             ->get();
     }

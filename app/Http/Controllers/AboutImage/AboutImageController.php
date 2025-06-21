@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Http\Controllers\AboutCounter;
+namespace App\Http\Controllers\AboutImage;
 
-use App\Http\Controllers\AboutCounter\Service\DestroyService;
-use App\Http\Controllers\AboutCounter\Service\IndexService;
-use App\Http\Controllers\AboutCounter\Service\StoreService;
-use App\Http\Controllers\AboutCounter\Service\UpdateService;
+use App\Http\Controllers\AboutImage\Service\DestroyService;
+use App\Http\Controllers\AboutImage\Service\IndexService;
+use App\Http\Controllers\AboutImage\Service\StroreService;
+use App\Http\Controllers\AboutImage\Service\UpdateService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-class AboutCounterController extends Controller
+class AboutImageController extends Controller
 {
     public function store(Request $request)
     {
-        $ss = new StoreService($request->input('title'), $request->input('value'));
+        $ss = new StroreService($request->file('imageFilename'));
 
         return response()->json($ss->main());
     }
 
     public function update(Request $request)
     {
-        $us = new UpdateService($request->input('title'), $request->input('value'), $request->input('token'));
+        $us = new UpdateService($request->file('imageFilename'), $request->input('token'));
 
         return response()->json($us->main());
     }

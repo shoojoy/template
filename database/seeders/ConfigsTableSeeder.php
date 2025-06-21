@@ -11,10 +11,18 @@ class ConfigsTableSeeder extends Seeder
     public function run()
     {
         DB::table('configs')->insert([
-            'config' => 'media_title',
-            'value' => '기본 세팅 입니다.',
-            'created_at' => now(),
-            'updated_at' => now()
+            [
+                'config'     => 'media_title',
+                'value'      => '기본 세팅 입니다.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'config'     => 'about_title',
+                'value'      => '기본 세팅 입니다.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

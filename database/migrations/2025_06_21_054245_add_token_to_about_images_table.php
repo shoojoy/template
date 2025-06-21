@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('about_counters', function (Blueprint $table) {
+        Schema::table('about_images', function (Blueprint $table) {
             $table->string('token');
         });
     }
@@ -21,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('about_images', function (Blueprint $table) {
+            $table->dropColumn('token');
+        });
     }
 };

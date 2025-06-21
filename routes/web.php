@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AboutImage\AboutImageController;
 use App\Http\Controllers\Auth\SignInController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\Media\MediaController;
@@ -29,6 +30,8 @@ Route::middleware('auth.admin')->group(function () {
         ->name('admin.hero');
     Route::get('/admin/media', fn() => Inertia::render('adminComponents/AdminMedia'))
         ->name('admin.media');
+    Route::get('/admin/about', fn() => Inertia::render('adminComponents/AdminAbout'))
+        ->name('admin.about');
     Route::post('/admin/config', [ConfigController::class, 'main'])
         ->name('admin.config.update');
 
@@ -47,6 +50,11 @@ Route::middleware('auth.admin')->group(function () {
         Route::put('/update', [AboutCounterController::class, 'update']);
         Route::delete('/{token}', [AboutCounterController::class, 'destroy']);
     });
+    Route::prefix('about-image')->group(function () {
+        Route::post('/store', [AboutImageController::class, 'store']);
+        Route::put('/update', [AboutImageController::class, 'update']);
+        Route::delete('/{token}', [AboutImageController::class, 'destroy']);
+    });
 });
 
 Route::prefix('hero')->group(function () {
@@ -55,5 +63,12 @@ Route::prefix('hero')->group(function () {
 Route::prefix('media')->group(function () {
     Route::get('/', [MediaController::class, 'index']);
 });
+Route::prefix('about-counter')->group(function () {
+    Route::get('/', [AboutCounterController::class, 'index']);
+});
+Route::prefix('about-image')->group(function () {
+    Route::get('/', [AboutImageController::class, 'index']);
+});
+
 
 require __DIR__ . '/auth.php';

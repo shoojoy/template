@@ -60,7 +60,7 @@ class UpdateService extends Service
 
             DB::commit();
             return ['status' => true];
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             return [
                 'status'  => false,
