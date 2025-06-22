@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\AboutImage\Service;
+namespace App\Http\Controllers\Business\Service;
 
 use App\Http\Service\Service;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +36,7 @@ class DestroyService extends Service
         $validator = Validator::make([
             'token' => $this->token
         ], [
-            'token' => ['required', 'string', 'exists:about_images,token']
+            'token' => ['required', 'string', 'exists:business_images,token']
         ], [
             'token.required' => '삭제할 이미지가 존재하지 않습니다.',
             'token.exists' => '유효한 이미지가 아닙니다.'
@@ -56,7 +56,7 @@ class DestroyService extends Service
 
     private function delete(): array
     {
-        $about = DB::table('about_images')
+        $about = DB::table('business_images')
             ->where('token', $this->token)
             ->first();
 
@@ -69,16 +69,16 @@ class DestroyService extends Service
 
         if (! empty($about->image_filename)) {
             $filename = basename($about->image_filename);
-            $this->destroyImage('about', $filename);
+            $this->destroyImage('business', $filename);
         }
 
-        DB::table('about_images')
+        DB::table('business_images')
             ->where('token', $this->token)
             ->delete();
 
         return [
             'status'  => true,
-            'message' => '어바웃 이미지가 성공적으로 삭제되었습니다.',
+            'message' => '비즈니스 이미지가 성공적으로 삭제되었습니다.',
         ];
     }
 }

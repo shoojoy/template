@@ -1,6 +1,7 @@
 import Hero from "@/basics/Hero";
 import Midea from "@/basics/Media";
 import About from "@/basics/About";
+import Business from "@/basics/Business";
 import Layout from "@/layouts/Layouts";
 import { usePage } from "@inertiajs/react";
 
@@ -12,6 +13,7 @@ export default function Welcome() {
             <Hero heroes={contents.heroes} />
             <Midea medias={contents.medias} />
             <About abouts={contents.abouts} />
+            <Business business={contents.business} />
         </Layout>
     );
 }

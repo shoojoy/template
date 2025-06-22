@@ -36,11 +36,18 @@ class WelcomeController extends Controller
             return redirect('/admins/SignIn');
         }
 
+        $businessImages = $this->getBusinessImages();
+
+        if ($businessImages->isEmpty()) {
+            return redirect('/admins/SignIn');
+        }
+
         return Inertia::render('welcome', [
             'heroes' => $heroes,
             'medias' => $medias,
             'abouts' => $abouts,
-            'aboutImages' => $aboutImages
+            'aboutImages' => $aboutImages,
+            'businessImages' => $businessImages
         ]);
     }
 
@@ -80,6 +87,16 @@ class WelcomeController extends Controller
     }
 
     private function getAboutImages()
+    {
+        return DB::table('about_images')
+            ->select([
+                'token',
+                'image_filename as image',
+            ])
+            ->get();
+    }
+
+    private function getBusinessImages()
     {
         return DB::table('about_images')
             ->select([
