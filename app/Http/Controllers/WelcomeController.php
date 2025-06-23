@@ -42,12 +42,26 @@ class WelcomeController extends Controller
             return redirect('/admins/SignIn');
         }
 
+        $footers = $this->getFooters();
+
+        if ($footers->isEmpty()) {
+            return redirect('/admins/SignIn');
+        }
+
+        $header = $this->getHeader();
+
+        if ($header->isEmpty()) {
+            return redirect('admins/SignIn');
+        }
+
         return Inertia::render('welcome', [
             'heroes' => $heroes,
             'medias' => $medias,
             'abouts' => $abouts,
             'aboutImages' => $aboutImages,
-            'businessImages' => $businessImages
+            'businessImages' => $businessImages,
+            'footers' => $footers,
+            'header' => $header
         ]);
     }
 
@@ -102,6 +116,32 @@ class WelcomeController extends Controller
             ->select([
                 'token',
                 'image_filename as image',
+            ])
+            ->get();
+    }
+
+    private function getFooters()
+    {
+        return DB::table('admins')
+            ->select([
+                'username',
+                'password',
+                'address',
+                'company_name',
+                'ceo_name',
+                'business_number',
+                'phone',
+                'fax',
+                'email',
+            ])
+            ->get();
+    }
+
+    private function getHeader()
+    {
+        return DB::table('admins')
+            ->select([
+                'logo_image_filename'
             ])
             ->get();
     }

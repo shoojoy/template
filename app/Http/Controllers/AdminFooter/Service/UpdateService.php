@@ -72,19 +72,19 @@ class UpdateService
             'email' => $this->email
         ], [
             'address' => ['nullable', 'string', 'max:255'],
-            'companyName' => ['nullable', 'string', 'max:20'],
-            'ceoName' => ['nullable', 'string', 'max:20'],
-            'businessNumber' => ['nullable', 'string', 'max:20'],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'fax' => ['nullable', 'string', 'max:30'],
+            'companyName' => ['nullable', 'string', 'max:255'],
+            'ceoName' => ['nullable', 'string', 'max:255'],
+            'businessNumber' => ['nullable', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:255'],
+            'fax' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'string', 'max:255'],
         ], [
             'address.max' => '회사주소는 최대 255글자까지 가능합니다.',
-            'companyName.max' => '회사명은 최대 20글자까지 가능합니다.',
-            'ceoName.max' => '대표자 성함은 최대 20글자까지 가능합니다.',
-            'businessNumber_max' => '사업자등록번호는 최대 20글자까지 가능합니다.',
-            'phone.max' => '번호는 최대 20글자까지 가능합니다.',
-            'fax.max' => '팩스 번호는 최대 30글자까지 가능합니다.',
+            'companyName.max' => '회사명은 최대 255글자까지 가능합니다.',
+            'ceoName.max' => '대표자 성함은 최대 255글자까지 가능합니다.',
+            'businessNumber_max' => '사업자등록번호는 최대 255글자까지 가능합니다.',
+            'phone.max' => '번호는 최대 255글자까지 가능합니다.',
+            'fax.max' => '팩스 번호는 최대 255글자까지 가능합니다.',
             'email.max' => '이메일은 최대 255글자까지 가능합니다.',
         ]);
 

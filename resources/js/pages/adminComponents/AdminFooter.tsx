@@ -1,7 +1,4 @@
-// resources/js/pages/adminComponents/AdminFooter.tsx
-
 import React, { useState } from 'react';
-import api from '../../api';
 import axios from 'axios';
 
 interface FooterForm {
@@ -25,6 +22,7 @@ export default function AdminFooter() {
         email: '',
     });
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -34,28 +32,25 @@ export default function AdminFooter() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        setError(null);
 
         try {
-            // CSRF 쿠키가 이미 전역에서 세팅되어 있다면 이 호출은 생략 가능
             await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
-
-            const res = await api.put('/admin-footer', form);
+            const res = await axios.put('/footer/update', form, { withCredentials: true });
             if (res.data.status) {
                 alert('저장 완료!');
             } else {
-                alert('오류: ' + (res.data.return || res.data.message));
+                setError(res.data.return || res.data.message || '알 수 없는 오류가 발생했습니다.');
             }
         } catch (err: unknown) {
             console.error('Footer PUT 에러:', err);
-
             if (axios.isAxiosError(err)) {
-                // AxiosError 타입은 직접 import 하지 않아도 됩니다
                 const msg = err.response?.data?.message ?? err.message;
-                alert(msg);
+                setError(msg);
             } else if (err instanceof Error) {
-                alert(err.message);
+                setError(err.message);
             } else {
-                alert(String(err));
+                setError(String(err));
             }
         } finally {
             setLoading(false);
@@ -167,11 +162,14 @@ export default function AdminFooter() {
                         />
                     </div>
 
+                    {error && (
+                        <p className="text-red-500 text-sm">{error}</p>
+                    )}
+
                     <button
                         type="submit"
                         disabled={loading}
-                        className={`px-4 py-2 rounded text-white ${loading ? 'bg-gray-400' : 'bg-blue-600'
-                            }`}
+                        className={`px-4 py-2 rounded text-white ${loading ? 'bg-gray-400' : 'bg-blue-600'}`}
                     >
                         {loading ? '저장 중...' : '저장'}
                     </button>

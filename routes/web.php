@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\AboutImage\AboutImageController;
+use App\Http\Controllers\AdminFooter\AdminFooterController;
 use App\Http\Controllers\Auth\SignInController;
 use App\Http\Controllers\Business\BusinessController;
 use App\Http\Controllers\ConfigController;
+use App\Http\Controllers\Header\HeaderController;
+use App\Http\Controllers\Inquiry\InquiryController;
 use App\Http\Controllers\Media\MediaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,7 +28,7 @@ Route::get('admins/SignIn', [SignInController::class, 'main'])->name('admins.Sig
 Route::get('admins/SignIn', [SignInController::class, 'show'])->name('admins.SignIn');
 
 Route::middleware('auth.admin')->group(function () {
-    Route::get('/admin/footer', fn() => Inertia::render('adminComponents/AdminFooter'))
+    Route::get('/admin/footer', fn() => Inertia::render('adminComponents/Footer'))
         ->name('admin.footer');
     Route::get('/admin/hero', fn() => Inertia::render('adminComponents/Hero'))
         ->name('admin.hero');
@@ -35,6 +38,10 @@ Route::middleware('auth.admin')->group(function () {
         ->name('admin.about');
     Route::get('/admin/business', fn() => Inertia::render('adminComponents/Business'))
         ->name('admin.business');
+    Route::get('/admin/inquiry', fn() => Inertia::render('adminComponents/Inquiry'))
+        ->name('admin.inquiry');
+    Route::get('/admin/header', fn() => Inertia::render('adminComponents/Header'))
+        ->name('admin.header');
     Route::post('/admin/config', [ConfigController::class, 'main'])
         ->name('admin.config.update');
 
@@ -63,6 +70,17 @@ Route::middleware('auth.admin')->group(function () {
         Route::put('/update', [BusinessController::class, 'update']);
         Route::delete('/{token}', [BusinessController::class, 'destroy']);
     });
+    Route::prefix('inquiry')->group(function () {
+        Route::post('/store', [InquiryController::class, 'store']);
+        Route::delete('/{token}', [InquiryController::class, 'destroy']);
+        Route::put('/update', [InquiryController::class, 'update']);
+    });
+    Route::prefix('footer')->group(function () {
+        Route::put('/update', [AdminFooterController::class, 'update']);
+    });
+    Route::prefix('header')->group(function () {
+        Route::put('/update', [HeaderController::class, 'update']);
+    });
 });
 
 Route::prefix('hero')->group(function () {
@@ -80,7 +98,12 @@ Route::prefix('about-image')->group(function () {
 Route::prefix('business-image')->group(function () {
     Route::get('/', [BusinessController::class, 'index']);
 });
-
+Route::prefix('inquiry')->group(function () {
+    Route::get('/', [InquiryController::class, 'index']);
+});
+Route::prefix('header')->group(function () {
+    Route::get('/', [HeaderController::class, 'index']);
+});
 
 
 require __DIR__ . '/auth.php';

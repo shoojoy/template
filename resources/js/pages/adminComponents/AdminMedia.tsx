@@ -226,16 +226,16 @@ export default function AdminMedia() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block font-medium text-black">이미지</label>
-                                    <div className="flex items-center space-x-4 mt-2">
-                                        <label
-                                            htmlFor={`file-${item.token}`}
-                                            className="bg-blue-600 text-black px-4 py-2 rounded cursor-pointer"
-                                        >
-                                            파일 선택
-                                        </label>
+                                    <label
+                                        className="block w-full text-center py-3 bg-gray-100 hover:bg-gray-200 rounded cursor-pointer transition"
+                                    >
+                                        {item.file
+                                            ? item.file.name
+                                            : item.imageUrl
+                                                ? '새 파일 선택'
+                                                : '이미지 선택'
+                                        }
                                         <input
-                                            id={`file-${item.token}`}
                                             type="file"
                                             accept="image/*"
                                             onChange={e =>
@@ -243,7 +243,22 @@ export default function AdminMedia() {
                                             }
                                             className="hidden"
                                         />
-                                        {item.file && <span className="text-sm text-black">{item.file.name}</span>}
+                                    </label>
+                                    {/* 기존 이미지/새로 선택한 파일 미리보기 */}
+                                    <div className="mt-2 h-40 flex justify-center items-center border border-dashed border-gray-300 rounded overflow-hidden">
+                                        {item.file ? (
+                                            <img
+                                                src={URL.createObjectURL(item.file)}
+                                                alt="preview"
+                                                className="max-h-full object-contain"
+                                            />
+                                        ) : item.imageUrl ? (
+                                            <img
+                                                src={item.imageUrl}
+                                                alt="stored"
+                                                className="max-h-full object-contain"
+                                            />
+                                        ) : null}
                                     </div>
                                 </div>
                                 <div className="flex space-x-2">

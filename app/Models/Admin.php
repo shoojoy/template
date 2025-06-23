@@ -20,6 +20,7 @@ class Admin extends Authenticatable
         'fax',
         'email',
         'logo_image_filename',
+        'token'
     ];
 
     protected $hidden = [

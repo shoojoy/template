@@ -35,6 +35,12 @@ class ConfigsTableSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'config'     => 'inquiry_title',
+                'value'      => '기본 세팅 입니다.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

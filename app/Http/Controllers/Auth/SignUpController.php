@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Service\Service;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Http\UploadedFile;
 
-class SignUpController
+class SignUpController extends Service
 {
     public function main(Request $request)
     {
@@ -94,30 +97,43 @@ class SignUpController
         try {
             DB::beginTransaction();
 
+            $file     = $request->file('logo_image_filename');
+            $pathname = $request->input('upload_path', 'header');
+
+            $storeImage = $this->storeImage($file, $pathname);
+            if (! $storeImage['status']) {
+                return $storeImage;
+            }
+
+            $publicUrl = $storeImage['publicUrl'];
+
             Admin::create([
-                'username' => $request->username,
-                'password' => Hash::make($request->password),
-                'address' => $request->address,
-                'company_name' => $request->company_name,
-                'ceo_name' => $request->ceo_name,
-                'business_number' => $request->business_number,
-                'phone' => $request->phone,
-                'fax' => $request->fax,
-                'email' => $request->email,
-                'logo_image_filename' => $request->logo_image_filename
+                'username'            => $request->username,
+                'password'            => Hash::make($request->password),
+                'address'             => $request->address,
+                'company_name'        => $request->company_name,
+                'ceo_name'            => $request->ceo_name,
+                'business_number'     => $request->business_number,
+                'phone'               => $request->phone,
+                'fax'                 => $request->fax,
+                'email'               => $request->email,
+                'logo_image_filename' => $publicUrl,
+                'token' => Str::uuid()->toString()
             ]);
 
             DB::commit();
+
+            return [
+                'status'  => true,
+                'message' => '성공적으로 가입을 완료하였습니다.'
+            ];
         } catch (\Exception $e) {
             DB::rollback();
+
             return [
                 'status' => false,
-                'return' => $e->getMessage()
+                'return' => $e->getMessage(),
             ];
         }
-        return [
-            'status' => true,
-            'message' => '성공적으로 가입을 완료하였습니다.'
-        ];
     }
 }

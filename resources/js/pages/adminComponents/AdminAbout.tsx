@@ -283,17 +283,31 @@ const ImageSection: React.FC<ReturnType<typeof useImageCrud>> = ({
             const isNew = item.token.startsWith('temp-')
             return (
                 <div key={item.token} className="bg-white p-4 rounded shadow mb-4 space-y-4">
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={e => updateField(item.token, e.target.files?.[0] ?? null)}
-                        className="w-full"
-                    />
-                    <div className="h-40">
-                        {item.file
-                            ? <img src={URL.createObjectURL(item.file)} alt="preview" className="h-full object-contain" />
-                            : item.imageUrl && <img src={item.imageUrl} alt="stored" className="h-full object-contain" />
-                        }
+                    <label className="block w-full text-center py-3 bg-gray-100 hover:bg-gray-200 rounded cursor-pointer transition">
+                        {item.file ? item.file.name : item.imageUrl ? '새 파일 선택' : '이미지 선택'}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={e => updateField(item.token, e.target.files?.[0] ?? null)}
+                            className="hidden"
+                        />
+                    </label>
+                    <div className="h-40 border border-dashed border-gray-300 rounded overflow-hidden flex justify-center items-center">
+                        {item.file ? (
+                            <img
+                                src={URL.createObjectURL(item.file)}
+                                alt="preview"
+                                className="max-w-full max-h-full object-contain"
+                            />
+                        ) : (
+                            item.imageUrl && (
+                                <img
+                                    src={item.imageUrl}
+                                    alt="stored"
+                                    className="max-w-full max-h-full object-contain"
+                                />
+                            )
+                        )}
                     </div>
                     <div className="flex space-x-2">
                         {isNew

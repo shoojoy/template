@@ -6,10 +6,12 @@ const menuItems = [
     { label: 'Media', href: '/admin/media' },
     { label: 'About', href: '/admin/about' },
     { label: 'Business', href: '/admin/business' },
+    { label: 'Inquiry', href: '/admin/inquiry' },
+    { label: 'header', href: '/admin/header' },
+    { label: 'Footer', href: '/admin/footer' },
 ]
 
 export default function AdminMenu() {
-    // 현재 URL (예: "/admin/business")
     const { url } = usePage<{ url: string }>()
 
     return (

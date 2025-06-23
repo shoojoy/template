@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Media\Service;
+namespace App\Http\Controllers\Header\Service;
 
 use App\Http\Service\Service;
 use Illuminate\Support\Facades\DB;
@@ -16,16 +16,15 @@ class IndexService extends Service
     {
         return [
             'status' => true,
-            'medias' => $this->getMedias()
+            'medias' => $this->getAdminImage()
         ];
     }
 
-    private function getMedias()
+    private function getAdminImage()
     {
-        return DB::table('medias')
+        return DB::table('admins')
             ->select([
-                'title',
-                'image_filename as image',
+                'logo_image_filename as image',
                 'token',
             ])
             ->get();
