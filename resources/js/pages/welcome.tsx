@@ -3,6 +3,7 @@ import Midea from "@/basics/Media";
 import About from "@/basics/About";
 import Business from "@/basics/Business";
 import Inquiry from "@/basics/Inquiry";
+import PhoneButton from '@/basics/PhoneButton'
 import Layout from "@/layouts/Layouts";
 import { usePage } from "@inertiajs/react";
 
@@ -16,6 +17,7 @@ export default function Welcome() {
             <About abouts={contents.abouts} />
             <Business business={contents.business} />
             <Inquiry Inquiry={contents.business} />
+            <PhoneButton />
         </Layout>
     );
 }

@@ -112,7 +112,7 @@ class WelcomeController extends Controller
 
     private function getBusinessImages()
     {
-        return DB::table('about_images')
+        return DB::table('business_images')
             ->select([
                 'token',
                 'image_filename as image',

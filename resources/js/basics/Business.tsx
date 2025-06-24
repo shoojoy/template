@@ -1,6 +1,7 @@
 // resources/js/basics/Business.tsx
-import React, { useEffect } from 'react'
+import React from 'react'
 import { usePage } from '@inertiajs/react'
+import { motion } from 'framer-motion'
 
 interface BusinessImage {
     token: string
@@ -13,7 +14,6 @@ interface Config {
     value: string
 }
 
-// Inertia.usePage 제약을 만족시키기 위해 인덱스 시그니처 포함
 interface BusinessPageProps {
     configs?: Config[]
     businessImages?: BusinessImage[]
@@ -22,60 +22,78 @@ interface BusinessPageProps {
 
 export default function BusinessSection() {
     const { props } = usePage<BusinessPageProps>()
-
-    // 서버에서 넘어온 배열을 안전하게 받아오기
     const configs = Array.isArray(props.configs) ? props.configs : []
     const imagesRaw = Array.isArray(props.businessImages) ? props.businessImages : []
 
-    // 설정값
     const title = configs.find(c => c.config === 'business_title')?.value || ''
     const subtitle = configs.find(c => c.config === 'business_subtitle')?.value || ''
 
-    // 유효 URL만 걸러내기
+    // 유효 이미지 추출
     const validImages = imagesRaw
         .map(img => ({ ...img, _url: (img.image_filename ?? img.image ?? '').trim() }))
         .filter(img => img._url)
-
+    const firstImage = validImages[0] ?? null
     const baseUrl = import.meta.env.VITE_APP_URL || window.location.origin
 
-    // 디버깅
-    useEffect(() => {
-        console.log('Business configs:', configs)
-        console.log('Business images:', validImages)
-    }, [configs, validImages])
+    // background-image URL
+    const imageUrl = firstImage
+        ? encodeURI(
+            firstImage._url.startsWith('http')
+                ? firstImage._url
+                : `${baseUrl}${firstImage._url}`
+        )
+        : ''
 
     return (
-        <section id="business" className="py-20 bg-white">
-            <div className="max-w-screen-xl mx-auto px-4 text-center space-y-4">
-                {title && <h2 className="text-4xl font-bold">{title}</h2>}
-                {subtitle && <p className="text-lg text-gray-600">{subtitle}</p>}
-            </div>
+        <section
+            id="business"
+            className="relative w-full h-screen bg-white overflow-hidden"
+        >
+            <motion.div
+                className="relative z-30 w-full text-center py-35"
+                initial={{ opacity: 0, y: -20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.6 }}
+            >
+                {title && (
+                    <motion.h2
+                        className="text-4xl font-bold text-[#2C2B28]"
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        whileInView={{ scale: 1, opacity: 1 }}
+                        viewport={{ once: true, amount: 0.5 }}
+                        transition={{ duration: 0.5, delay: 0.2, ease: 'backOut' }}
+                    >
+                        {title}
+                    </motion.h2>
+                )}
+                {subtitle && (
+                    <motion.p
+                        className="text-2xl text-[#2C2B28] mt-2"
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.5 }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                    >
+                        {subtitle}
+                    </motion.p>
+                )}
+            </motion.div>
 
-            <div className="max-w-screen-xl mx-auto px-4 mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                {validImages.length > 0
-                    ? validImages.map(m => {
-                        const src = m._url.startsWith('http')
-                            ? m._url
-                            : `${baseUrl}${m._url}`
-
-                        return (
-                            <div key={m.token} className="overflow-hidden rounded-lg shadow-lg">
-                                <img
-                                    src={encodeURI(src)}
-                                    alt=""
-                                    className="w-full h-48 object-cover"
-                                    onError={e => console.error('Business image failed:', e.currentTarget.src)}
-                                />
-                            </div>
-                        )
-                    })
-                    : (
-                        <p className="col-span-full text-center text-gray-500">
-                            등록된 이미지가 없습니다.
-                        </p>
-                    )
-                }
-            </div>
+            {/* CSS-only 파랄랙스 배경 + 오버레이 */}
+            {firstImage ? (
+                <div
+                    className="absolute inset-0 top-[30%] bg-fixed bg-center bg-cover"
+                    style={{ backgroundImage: `url(${imageUrl})` }}
+                >
+                    {/* 어두운 오버레이 */}
+                    <div className="absolute inset-0 bg-black/60 pointer-events-none" />
+                </div>
+            ) : (
+                <p className="absolute inset-0 flex items-center justify-center text-gray-500">
+                    등록된 이미지가 없습니다.
+                </p>
+            )}
         </section>
     )
 }

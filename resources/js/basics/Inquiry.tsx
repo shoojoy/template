@@ -1,3 +1,4 @@
+// resources/js/basics/Inquiry.tsx
 import React, { useState } from 'react'
 import axios from 'axios'
 import { usePage } from '@inertiajs/react'
@@ -48,9 +49,12 @@ export default function Inquiry() {
     }
 
     return (
-        <section id="contact" className="bg-gray-100 py-12">
-            <div className="max-w-xl mx-auto px-4 bg-white p-6 rounded shadow">
-                <h2 className="text-2xl font-bold mb-6">{inquiryTitle}</h2>
+        <section
+            id="contact"
+            className="w-full h-screen bg-white flex items-center justify-center"
+        >
+            <div className="w-full max-w-xl bg-[#EEEEEE] p-6 rounded shadow-lg mx-4">
+                <h2 className="text-2xl font-bold mb-6 text-center text-[#2C2B28]">{inquiryTitle}</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
@@ -59,7 +63,7 @@ export default function Inquiry() {
                         value={form.name}
                         onChange={handleChange}
                         placeholder="성함"
-                        className="w-full border px-3 py-2 rounded"
+                        className="w-full border px-3 py-2 rounded text-[#2C2B28]"
                         required
                     />
                     <input
@@ -68,7 +72,7 @@ export default function Inquiry() {
                         value={form.phoneNumber}
                         onChange={handleChange}
                         placeholder="연락처"
-                        className="w-full border px-3 py-2 rounded"
+                        className="w-full border px-3 py-2 rounded text-[#2C2B28]"
                         required
                     />
                     <input
@@ -77,7 +81,7 @@ export default function Inquiry() {
                         value={form.email}
                         onChange={handleChange}
                         placeholder="이메일 (선택)"
-                        className="w-full border px-3 py-2 rounded"
+                        className="w-full border px-3 py-2 rounded text-[#2C2B28]"
                     />
                     <input
                         type="text"
@@ -85,7 +89,7 @@ export default function Inquiry() {
                         value={form.title}
                         onChange={handleChange}
                         placeholder="문의 제목"
-                        className="w-full border px-3 py-2 rounded"
+                        className="w-full border px-3 py-2 rounded text-[#2C2B28]"
                         required
                     />
                     <textarea
@@ -94,21 +98,21 @@ export default function Inquiry() {
                         onChange={handleChange}
                         placeholder="문의 내용"
                         rows={5}
-                        className="w-full border px-3 py-2 rounded"
+                        className="w-full border px-3 py-2 rounded text-[#2C2B28]"
                         required
-                    ></textarea>
+                    />
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded disabled:opacity-50"
+                        className="w-full bg-black hover:bg-[#2C2B28] text-white font-semibold py-2 rounded disabled:opacity-50"
                     >
                         {loading ? '전송 중...' : '문의하기'}
                     </button>
                 </form>
 
-                {success && <p className="text-green-600 mt-4">문의가 성공적으로 접수되었습니다.</p>}
-                {error && <p className="text-red-600 mt-4">{error}</p>}
+                {success && <p className="text-green-600 mt-4 text-center">문의가 성공적으로 접수되었습니다.</p>}
+                {error && <p className="text-red-600 mt-4 text-center">{error}</p>}
             </div>
         </section>
     )

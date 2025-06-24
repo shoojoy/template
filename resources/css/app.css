@@ -157,3 +157,17 @@
         @apply bg-background text-foreground font-sans;
     }
 }
+
+@layer utilities {
+  /* 1) px-4 (container padding) 상관없이 슬라이더가 좌우 끝에 붙도록 overflow-hidden 부모에 negative margin 적용 */
+  :global(.overflow-hidden.-mt-8) {
+    margin-left: -1rem;   /* 부모 px-4가 1rem 이므로, 슬라이더를 좌우 끝으로 당김 */
+    margin-right: -1rem;
+  }
+
+  /* 2) 오른쪽만 peek 효과 */
+  :global(.custom-slick .slick-list) {
+    padding-left: 0 !important;
+    padding-right: 40px !important;
+  }
+}
