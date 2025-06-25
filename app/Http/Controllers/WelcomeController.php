@@ -54,6 +54,12 @@ class WelcomeController extends Controller
             return redirect('admins/SignIn');
         }
 
+        $businessHistories = $this->getBusinessHistories();
+
+        if ($businessHistories->isEmpty()) {
+            return redirect('admins/SignIn');
+        }
+
         return Inertia::render('welcome', [
             'heroes' => $heroes,
             'medias' => $medias,
@@ -61,7 +67,8 @@ class WelcomeController extends Controller
             'aboutImages' => $aboutImages,
             'businessImages' => $businessImages,
             'footers' => $footers,
-            'header' => $header
+            'header' => $header,
+            'bussinessHistories' => $businessHistories,
         ]);
     }
 
@@ -142,6 +149,17 @@ class WelcomeController extends Controller
         return DB::table('admins')
             ->select([
                 'logo_image_filename'
+            ])
+            ->get();
+    }
+
+    private function getBusinessHistories()
+    {
+        return DB::table('business_histories')
+            ->select([
+                'content',
+                'year',
+                'token',
             ])
             ->get();
     }

@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\AboutCounter\Service;
+namespace App\Http\Controllers\BusinessHistory\Service;
 
-use App\Http\Service\Service;
 use Illuminate\Support\Facades\DB;
 
-class IndexService extends Service
+class IndexService
 {
     public function __construct()
     {
@@ -16,16 +15,16 @@ class IndexService extends Service
     {
         return [
             'status' => true,
-            'about' => $this->getAboutCounters()
+            'history' => $this->getHistories()
         ];
     }
 
-    private function getAboutCounters()
+    private function getHistories()
     {
-        return DB::table('about_counters')
+        return DB::table('business_histories')
             ->select([
-                'title',
-                'value',
+                'content',
+                'year',
                 'token',
             ])
             ->get();

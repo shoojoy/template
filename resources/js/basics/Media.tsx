@@ -48,7 +48,7 @@ export default function MediaCarousel() {
         slidesToScroll: 1,
         infinite: infiniteLoop,
         autoplay: infiniteLoop,
-        autoplaySpeed: 3000,
+        autoplaySpeed: 2000,
         responsive: [
             { breakpoint: 1024, settings: { slidesToShow: Math.min(count, 5) } },
             { breakpoint: 768, settings: { slidesToShow: Math.min(count, 3) } },

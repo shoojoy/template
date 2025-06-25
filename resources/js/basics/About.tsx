@@ -119,8 +119,8 @@ const MobileImageSlider: React.FC<{ images: AboutImage[] }> = ({ images }) => {
                 breakpoint: 480,
                 settings: {
                     slidesToShow: 1,
-                    centerMode: true,      // ← 여기
-                    centerPadding: '0px',  // ← 여기
+                    centerMode: true,
+                    centerPadding: '0px',
                 }
             }
         ]

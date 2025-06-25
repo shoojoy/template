@@ -7,17 +7,21 @@ use App\Http\Controllers\AdminFooter\Service\UpdateService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
 
 class AdminFooterController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        $is = new IndexService();
+        $data = (new IndexService())->main();
 
-        return response()->json($is->main());
+        return response()->json([
+            'status' => true,
+            'footer' => $data,
+        ]);
     }
 
     /**

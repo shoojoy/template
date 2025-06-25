@@ -11,7 +11,7 @@ export default function PhoneButton() {
             {/* 모바일 전용: lg 미만에서만 보이는 버튼 */}
             <a
                 href={`tel:${phone}`}
-                className="block lg:hidden bg-[#599468] hover:bg-[#808080] text-white p-4 rounded-full shadow-lg"
+                className="block lg:hidden bg-[#FFC0CB] hover:bg-[#808080] text-white p-4 rounded-full shadow-lg"
             >
                 📞
             </a>
@@ -26,7 +26,7 @@ export default function PhoneButton() {
                 </span>
                 <a
                     href={`tel:${phone}`}
-                    className="bg-[#599468] hover:bg-[#808080] text-white p-4 rounded-full shadow-lg"
+                    className="bg-[#FFC0CB] hover:bg-[#808080] text-white p-4 rounded-full shadow-lg"
                 >
                     📞
                 </a>

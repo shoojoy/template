@@ -11,7 +11,7 @@ export default function HeroComponent({ heroes }: HeroProps) {
         if (heroes.length <= 1) return;
         const timer = setInterval(() => {
             setCurrentIdx((i) => (i + 1) % heroes.length);
-        }, 5000);
+        }, 2000);
         return () => clearInterval(timer);
     }, [heroes]);
 

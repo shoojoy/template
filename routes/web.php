@@ -13,6 +13,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Auth\SignUpController;
 use App\Http\Controllers\Hero\HeroController;
 use App\Http\Controllers\AboutCounter\AboutCounterController;
+use App\Http\Controllers\BusinessHistory\BusinessHistoryController;
 use App\Http\Controllers\WelcomeController;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('home');
@@ -81,6 +82,11 @@ Route::middleware('auth.admin')->group(function () {
     Route::prefix('header')->group(function () {
         Route::put('/update', [HeaderController::class, 'update']);
     });
+    Route::prefix('business-history')->group(function () {
+        Route::post('/store', [BusinessHistoryController::class, 'store']);
+        Route::put('/update', [BusinessHistoryController::class, 'update']);
+        Route::delete('/{token}', [BusinessHistoryController::class, 'destroy']);
+    });
 });
 
 Route::prefix('hero')->group(function () {
@@ -103,6 +109,12 @@ Route::prefix('inquiry')->group(function () {
 });
 Route::prefix('header')->group(function () {
     Route::get('/', [HeaderController::class, 'index']);
+});
+Route::prefix('footer')->group(function () {
+    Route::get('/', [AdminFooterController::class, 'index']);
+});
+Route::prefix('business-history')->group(function () {
+    Route::get('/', [BusinessHistoryController::class, 'index']);
 });
 
 

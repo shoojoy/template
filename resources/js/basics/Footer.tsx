@@ -17,17 +17,16 @@ export default function Footer() {
     // Inertia 페이지 props 에서 footers 배열을 꺼냅니다
     const { footers } = usePage<{ footers: FooterData[] }>().props
 
-    // footers가 없거나 비어있으면 아무것도 렌더링하지 않음
     if (!Array.isArray(footers) || footers.length === 0) {
         return null
     }
 
-    // 배열의 첫 번째 요소 사용
     const footer = footers[0]
 
     return (
-        <footer className="bg-[#606060] text-white z-10 py-8">
-            <div className="container mx-auto space-y-1 text-sm">
+        <footer className="bg-[#606060] text-white py-8">
+            {/* 양측에 padding을 주는 wrapper */}
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-1 text-sm">
                 <div className="font-bold text-lg">{footer.company_name}</div>
                 <div>주소: {footer.address}</div>
                 <div>대표자: {footer.ceo_name}</div>

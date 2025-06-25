@@ -51,9 +51,9 @@ export default function Inquiry() {
     return (
         <section
             id="contact"
-            className="w-full h-screen bg-white flex items-center justify-center"
+            className="w-full h-screen bg-[#FFFFF0] flex items-center justify-center"
         >
-            <div className="w-full max-w-xl bg-[#EEEEEE] p-6 rounded shadow-lg mx-4">
+            <div className="w-full max-w-xl bg-white p-6 rounded shadow-lg mx-4">
                 <h2 className="text-2xl font-bold mb-6 text-center text-[#2C2B28]">{inquiryTitle}</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -105,7 +105,7 @@ export default function Inquiry() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-black hover:bg-[#2C2B28] text-white font-semibold py-2 rounded disabled:opacity-50"
+                        className="w-full bg-white hover:bg-[#FFFFF0] text-[#2C2B28] font-semibold py-2 rounded disabled:opacity-50"
                     >
                         {loading ? '전송 중...' : '문의하기'}
                     </button>

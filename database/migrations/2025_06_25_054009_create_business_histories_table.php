@@ -11,9 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::rename('inquireis', 'inquiries');
-        Schema::table('inquiries', function (Blueprint $table) {
+        Schema::create('business_histories', function (Blueprint $table) {
+            $table->id();
+            $table->text('content')->nullable();
+            $table->dateTime('year');
             $table->string('token');
+            $table->timestamps();
         });
     }
 
@@ -22,10 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('inquiries', function (Blueprint $table) {
-            $table->dropColumn('token');
-        });
-
-        Schema::rename('inquiries', 'inquireis');
+        Schema::dropIfExists('business_histories');
     }
 };

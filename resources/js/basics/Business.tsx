@@ -9,6 +9,12 @@ interface BusinessImage {
     image?: string
 }
 
+interface BusinessHistory {
+    token: string
+    content: string
+    year: string
+}
+
 interface Config {
     config: string
     value: string
@@ -17,6 +23,7 @@ interface Config {
 interface BusinessPageProps {
     configs?: Config[]
     businessImages?: BusinessImage[]
+    businessHistories?: BusinessHistory[]
     [key: string]: any
 }
 
@@ -24,6 +31,7 @@ export default function BusinessSection() {
     const { props } = usePage<BusinessPageProps>()
     const configs = Array.isArray(props.configs) ? props.configs : []
     const imagesRaw = Array.isArray(props.businessImages) ? props.businessImages : []
+    const histories = Array.isArray(props.businessHistories) ? props.businessHistories : []
 
     const title = configs.find(c => c.config === 'business_title')?.value || ''
     const subtitle = configs.find(c => c.config === 'business_subtitle')?.value || ''
@@ -49,8 +57,9 @@ export default function BusinessSection() {
             id="business"
             className="relative w-full h-screen bg-white overflow-hidden"
         >
+            {/* 텍스트 영역: 흰색으로 변경 */}
             <motion.div
-                className="relative z-30 w-full text-center py-35"
+                className="relative z-30 w-full text-center py-10 text-white"
                 initial={{ opacity: 0, y: -20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.5 }}
@@ -58,7 +67,7 @@ export default function BusinessSection() {
             >
                 {title && (
                     <motion.h2
-                        className="text-4xl font-bold text-[#2C2B28]"
+                        className="text-4xl font-bold"
                         initial={{ scale: 0.8, opacity: 0 }}
                         whileInView={{ scale: 1, opacity: 1 }}
                         viewport={{ once: true, amount: 0.5 }}
@@ -69,7 +78,7 @@ export default function BusinessSection() {
                 )}
                 {subtitle && (
                     <motion.p
-                        className="text-2xl text-[#2C2B28] mt-2"
+                        className="text-2xl mt-2"
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, amount: 0.5 }}
@@ -80,10 +89,10 @@ export default function BusinessSection() {
                 )}
             </motion.div>
 
-            {/* CSS-only 파랄랙스 배경 + 오버레이 */}
+            {/* 전체화면 배경 이미지 + 오버레이 */}
             {firstImage ? (
                 <div
-                    className="absolute inset-0 top-[30%] bg-fixed bg-center bg-cover"
+                    className="absolute inset-0 bg-fixed bg-center bg-cover"
                     style={{ backgroundImage: `url(${imageUrl})` }}
                 >
                     {/* 어두운 오버레이 */}
@@ -94,6 +103,28 @@ export default function BusinessSection() {
                     등록된 이미지가 없습니다.
                 </p>
             )}
+
+            {/* 연혁 리스트 */}
+            <motion.div
+                className="relative z-30 container mx-auto px-4 sm:px-6 lg:px-8 mt-20 text-white"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+            >
+                {histories.length > 0 ? (
+                    <ul className="space-y-4">
+                        {histories.map(h => (
+                            <li key={h.token} className="flex justify-between">
+                                <span className="font-semibold">{h.year.slice(0, 4)}.{h.year.slice(4, 6)}</span>
+                                <span>{h.content}</span>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="text-gray-300">등록된 연혁이 없습니다.</p>
+                )}
+            </motion.div>
         </section>
     )
 }
