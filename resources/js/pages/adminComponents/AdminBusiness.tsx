@@ -1,4 +1,3 @@
-// resources/js/Pages/adminComponents/Business.tsx
 import React, { useState, useEffect, FormEvent } from 'react'
 import axios from 'axios'
 import { Inertia } from '@inertiajs/inertia'
@@ -10,7 +9,6 @@ interface HistoryDto { token: string; content: string; year: string }
 interface HistoryStep { token: string; content: string; year: string }
 interface LoadingState { saving: boolean; updating: boolean; deleting: boolean }
 
-// ─── Business Images CRUD Hook ───────────────────────────────────────────────
 function useBusinessCrud() {
     const [images, setImages] = useState<ImageStep[]>([])
     const [loading, setLoading] = useState<Record<string, LoadingState>>({})
@@ -128,7 +126,6 @@ function useBusinessCrud() {
     return { images, loading, addNew, updateField, save, update, remove }
 }
 
-// ─── Business History CRUD Hook ──────────────────────────────────────────────
 function useBusinessHistoryCrud() {
     const [entries, setEntries] = useState<HistoryStep[]>([])
     const [loading, setLoading] = useState<Record<string, LoadingState>>({})
@@ -142,7 +139,6 @@ function useBusinessHistoryCrud() {
                     return
                 }
 
-                // 1) convert year to "YYYYMM"
                 const mapped = list.map(h => {
                     const d = new Date(h.year)
                     const yyyymm =
@@ -151,7 +147,6 @@ function useBusinessHistoryCrud() {
                     return { token: h.token, content: h.content, year: yyyymm }
                 })
 
-                // 2) remove duplicates by token
                 const unique = Array.from(
                     new Map(mapped.map(item => [item.token, item])).values()
                 )
@@ -272,7 +267,6 @@ function useBusinessHistoryCrud() {
     return { entries, loading, addNew, updateField, save, update, remove }
 }
 
-// ─── Business Images JSX ─────────────────────────────────────────────────────
 const BusinessSection: React.FC<ReturnType<typeof useBusinessCrud>> = ({
     images, loading, addNew, updateField, save, update, remove
 }) => (
@@ -327,15 +321,17 @@ const BusinessSection: React.FC<ReturnType<typeof useBusinessCrud>> = ({
     </div>
 )
 
-// ─── Business History JSX ────────────────────────────────────────────────────
 const BusinessHistorySection: React.FC<ReturnType<typeof useBusinessHistoryCrud>> = ({
     entries, loading, addNew, updateField, save, update, remove
 }) => (
     <div>
         <h2 className="text-2xl font-semibold mb-4">Business History 관리</h2>
-        <button onClick={addNew} className="mb-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded">
-            연혁 추가
-        </button>
+        {entries.length < 5 && (
+            <button onClick={addNew}
+                className="mb-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded">
+                연혁 추가
+            </button>
+        )}
         {entries.map(entry => {
             const state = loading[entry.token]
             const isNew = entry.token.startsWith('temp-')
@@ -381,7 +377,6 @@ const BusinessHistorySection: React.FC<ReturnType<typeof useBusinessHistoryCrud>
     </div>
 )
 
-// ─── Main Admin Business Component ───────────────────────────────────────────
 export default function Business() {
     const businessCrud = useBusinessCrud()
     const historyCrud = useBusinessHistoryCrud()

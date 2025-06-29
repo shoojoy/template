@@ -96,7 +96,7 @@ export default function MediaCarousel() {
             </div>
 
             {/* 슬라이더 */}
-            <div className="mt-[400px] overflow-hidden">
+            <div className="mt-[400px]">
                 <div className="w-[90%] mx-auto">
                     <Slider {...settings} className="custom-slick">
                         {validMedias.map((media) => {

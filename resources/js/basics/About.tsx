@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react'
 import { usePage } from '@inertiajs/react'
 import { motion } from 'framer-motion'
 import Slider from 'react-slick'
+import CountUp from 'react-countup'
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 
@@ -29,56 +30,92 @@ interface PageProps {
     [key: string]: any
 }
 
-// === 데스크탑 레이아웃용 컴포넌트 (원본 그대로) ===
-const ImageGrid: React.FC<{ images: AboutImage[] }> = ({ images }) => {
+// === 데스크탑용 이미지 그리드 (짝수:좌 슬라이드업, 홀수:우 슬라이드다운) ===
+const ImageGridFlexTwoCol: React.FC<{ images: AboutImage[] }> = ({ images }) => {
     const baseUrl = import.meta.env.VITE_APP_URL || window.location.origin
 
+    const leftImages = images.filter((_, i) => i % 2 === 0)
+    const rightImages = images.filter((_, i) => i % 2 === 1)
+
+    const commonSettings = {
+        infinite: true,
+        vertical: true,
+        verticalSwiping: true,
+        slidesToShow: 2,
+        slidesToScroll: 1,
+        arrows: false,
+        autoplay: true,
+        autoplaySpeed: 3000,
+        dots: false,
+        pauseOnHover: false,
+        speed: 600,
+    }
+
+    const leftSettings = { ...commonSettings, rtl: false }
+    const rightSettings = { ...commonSettings, rtl: true }
+
+    const renderImg = (img: AboutImage, idx: number) => {
+        const raw = (img.image_filename ?? img.image ?? '').trim()
+        const src = raw.startsWith('http') ? raw : `${baseUrl}${raw}`
+
+        return (
+            <motion.div
+                key={img.token}
+                className="w-full aspect-square cursor-pointer border border-black/20 rounded-lg shadow-lg overflow-hidden"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+            >
+                <img
+                    src={encodeURI(src)}
+                    alt="About image"
+                    className="w-full h-full object-cover"
+                    onError={e => console.error('Image load failed:', e.currentTarget.src)}
+                />
+            </motion.div>
+        )
+    }
+
     return (
-        <div className="hidden md:grid grid-cols-2 grid-rows-2 gap-8 justify-items-center">
-            {images.slice(0, 4).map(({ token, image_filename, image }, idx) => {
-                const raw = (image_filename ?? image ?? '').trim()
-                const src = raw.startsWith('http') ? raw : `${baseUrl}${raw}`
-                const offsetClass = idx % 2 === 0 ? '-mt-8' : ''
-                return (
-                    <motion.div
-                        key={token}
-                        className={`w-70 aspect-square ${offsetClass} cursor-pointer border border-black/20 rounded-lg shadow-lg`}
-                        initial={{ y: 50, opacity: 0 }}
-                        whileInView={{ y: 0, opacity: 1 }}
-                        viewport={{ once: true, amount: 0.3 }}
-                        transition={{ duration: 0.6, delay: idx * 0.1, ease: 'easeOut' }}
-                        whileHover={{ scale: 1.1 }}
-                        style={{ originX: 0.5, originY: 0.5 }}
-                    >
-                        <img
-                            src={encodeURI(src)}
-                            alt="About image"
-                            className="w-full h-full object-cover rounded-lg"
-                            onError={e => console.error('Image load failed:', e.currentTarget.src)}
-                        />
-                    </motion.div>
-                )
-            })}
+        <div className="flex w-full gap-4 mt-24">
+            <div className="flex flex-col gap-4 w-1/2 relative -top-6 overflow-hidden">
+                <Slider {...leftSettings}>
+                    {leftImages.map(renderImg)}
+                </Slider>
+            </div>
+            <div className="flex flex-col gap-4 w-1/2 overflow-hidden">
+                <Slider {...rightSettings}>
+                    {rightImages.map(renderImg)}
+                </Slider>
+            </div>
         </div>
     )
 }
 
+// === 카운터 행 컴포넌트 (flex + 반응형 + CountUp) ===
 const CounterRow: React.FC<{ counters: AboutCounter[] }> = ({ counters }) => (
-    <div className="flex flex-wrap md:flex-nowrap items-center justify-center divide-x divide-gray-300">
+    <div className="flex flex-wrap md:flex-nowrap items-center justify-between divide-x divide-gray-300">
         {counters.map(({ token, title, value }, idx) => {
-            const displayValue =
-                value !== null && value !== undefined && value !== '' ? `${value}+` : ''
+            const numericValue = typeof value === 'number'
+                ? value
+                : parseInt(value as string, 10) || 0
+
             return (
                 <motion.div
                     key={token}
-                    className="flex flex-col items-center px-3 sm:px-5 py-2"
+                    className="flex-1 min-w-0 flex flex-col items-center px-4 py-3"
                     initial={{ y: 50, opacity: 0 }}
                     whileInView={{ y: 0, opacity: 1 }}
                     viewport={{ once: true, amount: 0.3 }}
                     transition={{ duration: 0.6, delay: idx * 0.1, ease: 'easeOut' }}
                 >
                     <motion.span
-                        className="text-xs sm:text-sm md:text-lg text-gray-700 mb-1"
+                        className="
+                    text-[clamp(1rem,2.2vw,1.2rem)]
+                    sm:text-[clamp(1.125rem,2vw,1.3rem)]
+                    md:text-[clamp(1rem,1.6vw,1.1rem)]
+                    text-gray-700 mb-1
+                    "
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.5, delay: idx * 0.1 + 0.2 }}
@@ -86,12 +123,25 @@ const CounterRow: React.FC<{ counters: AboutCounter[] }> = ({ counters }) => (
                         {title}
                     </motion.span>
                     <motion.span
-                        className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-gray-700"
+                        className="
+                    text-[clamp(1.8rem,3vw,2.2rem)]
+                    sm:text-[clamp(2rem,3.5vw,2.5rem)]
+                    md:text-[clamp(2.2rem,2.5vw,2.8rem)]
+                    font-extrabold text-gray-700
+                    "
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.5, delay: idx * 0.1 + 0.3, ease: 'backOut' }}
                     >
-                        {displayValue}
+                        <CountUp
+                            start={1}
+                            end={numericValue}
+                            duration={2}
+                            separator=","
+                            suffix="+"
+                            enableScrollSpy={true}
+                            scrollSpyOnce={true}
+                        />
                     </motion.span>
                 </motion.div>
             )
@@ -99,7 +149,7 @@ const CounterRow: React.FC<{ counters: AboutCounter[] }> = ({ counters }) => (
     </div>
 )
 
-// === 모바일 전용 슬라이더 컴포넌트 (모든 이미지 슬라이드 처리) ===
+// === 모바일 이미지 슬라이더 (변경 없음) ===
 const MobileImageSlider: React.FC<{ images: AboutImage[] }> = ({ images }) => {
     const baseUrl = import.meta.env.VITE_APP_URL || window.location.origin
     const count = images.length
@@ -114,16 +164,6 @@ const MobileImageSlider: React.FC<{ images: AboutImage[] }> = ({ images }) => {
         autoplaySpeed: 3000,
         centerMode: true,
         centerPadding: '0px',
-        responsive: [
-            {
-                breakpoint: 480,
-                settings: {
-                    slidesToShow: 1,
-                    centerMode: true,
-                    centerPadding: '0px',
-                }
-            }
-        ]
     }
 
     return (
@@ -134,18 +174,17 @@ const MobileImageSlider: React.FC<{ images: AboutImage[] }> = ({ images }) => {
                 return (
                     <motion.div
                         key={token}
-                        className="w-full max-w-xs mx-auto aspect-square cursor-pointer border border-black/20 rounded-lg shadow-lg"
+                        className="w-full max-w-xs mx-auto aspect-square cursor-pointer border border-black/20 rounded-lg shadow-lg overflow-hidden"
                         initial={{ y: 50, opacity: 0 }}
                         whileInView={{ y: 0, opacity: 1 }}
                         viewport={{ once: true, amount: 0.3 }}
                         transition={{ duration: 0.6, delay: idx * 0.1, ease: 'easeOut' }}
                         whileHover={{ scale: 1.03 }}
-                        style={{ originX: 0.5, originY: 0.5 }}
                     >
                         <img
                             src={encodeURI(src)}
                             alt="About image"
-                            className="w-full h-full object-cover rounded-lg"
+                            className="w-full h-full object-cover"
                             onError={e => console.error('Image load failed:', e.currentTarget.src)}
                         />
                     </motion.div>
@@ -155,10 +194,17 @@ const MobileImageSlider: React.FC<{ images: AboutImage[] }> = ({ images }) => {
     )
 }
 
+// === 메인 컴포넌트 ===
 export default function AboutSection() {
     const { props } = usePage<PageProps>()
-    const abouts = useMemo(() => Array.isArray(props.abouts) ? props.abouts : [], [props.abouts])
-    const images = useMemo(() => Array.isArray(props.aboutImages) ? props.aboutImages : [], [props.aboutImages])
+    const abouts = useMemo(
+        () => (Array.isArray(props.abouts) ? props.abouts : []),
+        [props.abouts]
+    )
+    const images = useMemo(
+        () => (Array.isArray(props.aboutImages) ? props.aboutImages : []),
+        [props.aboutImages]
+    )
     const aboutTitle = useMemo(
         () => props.configs?.find(c => c.config === 'about_title')?.value || '',
         [props.configs]
@@ -170,49 +216,48 @@ export default function AboutSection() {
     }, [abouts, images])
 
     return (
-        <section id="about" className="w-full bg-[#FFFFF0]">
-            {/* ─── 데스크탑 전용 원본 레이아웃 ─── */}
-            <div className="hidden md:block relative min-h-screen">
-                <div className="absolute left-50 top-1/4 w-1/3 p-4">
-                    <ImageGrid images={images} />
+        <section id="about" className="w-full bg-[#FFFFF0] min-h-screen flex items-center">
+            <div className="container mx-auto px-4">
+                {/* 데스크탑 레이아웃 */}
+                <div className="hidden md:flex items-start gap-8">
+                    <div className="w-1/2">
+                        <ImageGridFlexTwoCol images={images} />
+                    </div>
+                    <div className="w-1/2 flex flex-col items-center mt-80">
+                        {aboutTitle && (
+                            <motion.h2
+                                className="text-3xl sm:text-5xl font-bold text-[#2C2B28] mb-8"
+                                initial={{ opacity: 0, y: -20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, amount: 0.5 }}
+                                transition={{ duration: 0.6 }}
+                            >
+                                {aboutTitle}
+                            </motion.h2>
+                        )}
+                        <CounterRow counters={abouts} />
+                    </div>
                 </div>
-                <div className="absolute left-350 top-130 transform -translate-x-1/2 -translate-y-1/2 w-1/3 p-4">
-                    <CounterRow counters={abouts} />
-                </div>
-                {aboutTitle && (
-                    <motion.h2
-                        className="absolute top-80 left-337 transform -translate-x-1/2 mt-8 text-3xl sm:text-5xl font-bold text-[#2C2B28]"
-                        initial={{ opacity: 0, y: -20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.5 }}
-                        transition={{ duration: 0.6 }}
-                    >
-                        {aboutTitle}
-                    </motion.h2>
-                )}
-            </div>
 
-            {/* ─── 모바일 전용 전체 화면 레이아웃 ─── */}
-            <div className="md:hidden relative w-full flex flex-col h-screen">
-                <div className="absolute inset-0 bg-[#FFFFF0]" />
-                {aboutTitle && (
-                    <motion.h2
-                        className="z-10 text-2xl font-bold text-center text-[#2C2B28] mt-50"
-                        initial={{ opacity: 0, y: -10 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.5 }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        {aboutTitle}
-                    </motion.h2>
-                )}
-                <div className="z-10 py-6 flex justify-center">
+                {/* 모바일 레이아웃 */}
+                <div className="md:hidden flex flex-col items-center gap-6">
+                    {aboutTitle && (
+                        <motion.h2
+                            className="text-4xl font-bold text-center text-[#2C2B28]"
+                            initial={{ opacity: 0, y: -10 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.5 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            {aboutTitle}
+                        </motion.h2>
+                    )}
                     <div className="w-full max-w-xs">
                         <MobileImageSlider images={images} />
                     </div>
-                </div>
-                <div className="z-10 mt-20 md:mt-0 mb-8">
-                    <CounterRow counters={abouts} />
+                    <div className="mt-10 w-full flex justify-center">
+                        <CounterRow counters={abouts} />
+                    </div>
                 </div>
             </div>
         </section>

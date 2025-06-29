@@ -68,7 +68,7 @@ class WelcomeController extends Controller
             'businessImages' => $businessImages,
             'footers' => $footers,
             'header' => $header,
-            'bussinessHistories' => $businessHistories,
+            'businessHistories' => $businessHistories,
         ]);
     }
 
